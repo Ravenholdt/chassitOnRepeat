@@ -2,14 +2,10 @@
 
 <?php
     $name = $_GET["v"];
+    $start = $_GET["s"];
+    $end = $_GET["e"];
 
     $file = glob('files/*-'. $name .'.mp4');
-
-    $start = $_GET["s"];
-    if (!isset($_GET["s"])){ $start = 0; }
-
-    $end = $_GET["e"];
-    //if (!isset($_GET["s"])){ $end = 0; }
 ?>
 
 <header>
@@ -22,34 +18,80 @@
     </video>
 
     <script>
-        myVideo = document.getElementById("myvideo")
+        myVideo = document.getElementById("myvideo");
+
+        <?php
+        if (!isset($_GET["s"])){ $start = 0; }
+        if (!isset($_GET["e"])){ $end = -1; }
+        ?>
+
+        var start = <?php echo (int)$start ?>;
+        var end = <?php echo (int)$end ?>;
+
+        myVideo.onloadedmetadata = function() {
+            console.log('metadata loaded!');
+            console.log(this.duration);//this refers to myVideo
+            if (end < 0){
+                end = this.duration;
+            }
+        };
+
+        var deltaTime = 0;
+        var lastTime = myVideo.currentTime;
+
         /*
         document.getElementById('myvideo').addEventListener('loadedmetadata', function() {
             this.currentTime = start; 
         }, false);
         */
 
+        //echo myVideo.duration;
+
+        
+
         function update(t) {
+            deltaTime = 0;
             var xmlHttp = new XMLHttpRequest();
 
-            var url="update.php?v=<?php echo $file[0]; ?>&t="+t;
+            var url="update.php?v=<?php echo $name; ?>&t="+t;
             xmlHttp.open( "GET", url, false ); // false for synchronous request
             xmlHttp.send();
             console.log(xmlHttp.responseText);
         }
 
+        //setTimeout(update(deltaTime), 600000);
+
         myVideo.addEventListener('timeupdate', function() {
             console.log(this.currentTime);
-            if (this.currentTime < <?php echo $start ?>) {
-                this.currentTime = <?php echo $start ?>;
+            console.log(deltaTime);
+
+            if (this.currentTime < start) {
+                this.currentTime = start;
             }
-            if (this.currentTime > <?php echo $end ?>) {
-                this.currentTime = <?php echo $start ?>;
-                update(<?php echo $end-$start ?>);
+
+            deltaTime += this.currentTime - lastTime;
+            lastTime = this.currentTime;
+
+            if (this.currentTime > end) {
+                this.currentTime = start;
+                myVideo.play();
+                update(end-start);
             }
         }, false);
-        document.getElementById("myvideo").play()
+
+        
+
+        myVideo.addEventListener('ended', function() {
+            this.currentTime = start;
+            myVideo.play();
+            update(this.duration-start);
+        },false);
+
+        myVideo.play();
     </script>
+
+    <br>
+    <?php include "history.php" ?>
 </body>
 
 </html>

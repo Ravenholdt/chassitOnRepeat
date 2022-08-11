@@ -14,21 +14,20 @@
     $time = $_GET["t"];
 
     $file = glob('files/*-'. $name .'.mp4');
-    echo sizeof($file);
-    echo $file[0];
-
-
-    $serverApi = new ServerApi(ServerApi::V1);
-    $client = new MongoDB\Client(
-        'mongodb+srv://'.$_ENV["MONGO_USER"].':'.$_ENV["MONGO_PASS"].'@null.t2drt9o.mongodb.net/?retryWrites=true&w=majority', [], ['serverApi' => $serverApi]);
-
-    $collection = $client->repeat->data;
-
-    $insertOneResult = $collection->updateOne(
-        ['name' => $name],
-        ['$set' => ['lastplayed' => time()], '$inc' => ['playtime' => (int)$time]],
-        ['upsert' => true]
-    );
+    
+    if (count($file) == 1){
+        $serverApi = new ServerApi(ServerApi::V1);
+        $client = new MongoDB\Client(
+            'mongodb+srv://'.$_ENV["MONGO_USER"].':'.$_ENV["MONGO_PASS"].'@null.t2drt9o.mongodb.net/?retryWrites=true&w=majority', [], ['serverApi' => $serverApi]);
+    
+        $collection = $client->repeat->data;
+    
+        $insertOneResult = $collection->updateOne(
+            ['name' => $name],
+            ['$set' => ['lastplayed' => time()], '$inc' => ['playtime' => (int)$time]],
+            ['upsert' => true]
+        );
+    }
 
     //$deleteResult = $collection->deleteMany([]);
 ?>
