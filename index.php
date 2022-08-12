@@ -53,7 +53,7 @@
             deltaTime = 0;
             var xmlHttp = new XMLHttpRequest();
 
-            var url="update.php?v=<?php echo $name; ?>&t="+t;
+            var url="update.php?v=<?php echo $name; ?>&t="+t+"&s="+start+"&e="+end;
             xmlHttp.open( "GET", url, false ); // false for synchronous request
             xmlHttp.send();
             console.log(xmlHttp.responseText);

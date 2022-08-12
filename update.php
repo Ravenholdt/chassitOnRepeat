@@ -12,9 +12,11 @@
 
     $name = $_GET["v"];
     $time = $_GET["t"];
+    $start = $_GET["s"];
+    $end = $_GET["e"];
 
     $file = glob('files/*-'. $name .'.mp4');
-    
+
     if (count($file) == 1){
         $serverApi = new ServerApi(ServerApi::V1);
         $client = new MongoDB\Client(
@@ -24,7 +26,15 @@
     
         $insertOneResult = $collection->updateOne(
             ['name' => $name],
-            ['$set' => ['lastplayed' => time()], '$inc' => ['playtime' => (int)$time]],
+            [
+            '$set' => [
+                'lastplayed' => time(),
+                'start' => $start,
+                'end' => $end
+            ], 
+            '$inc' => [
+                'playtime' => (int)$time]
+            ],
             ['upsert' => true]
         );
     }

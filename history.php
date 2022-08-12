@@ -21,8 +21,15 @@
 
     foreach ( $cursor as $id => $value )
     {
+        $start = "";
+        $end = "";
+
+        if (isset($value['start'])){ $start = "&s=" . $value['start']; }
+        if (isset($value['end'])){ $end = "&e=" . $value['end']; }
+
         $file = glob('files/*-'. $value['name'] .'.mp4');
-        echo "<a href=?v=" . $value['name'] . ">";
+        echo "<a href=?v=" . $value['name'] . $start . $end . 
+        ">";
         echo explode("/", $file[0])[1];
         echo "</a>";
         echo "<br>";
