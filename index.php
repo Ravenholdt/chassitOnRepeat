@@ -8,14 +8,21 @@
     $file = glob('files/*-'. $name .'.mp4');
 ?>
 
-<header>
-</header>
+<head>
+    <link rel="stylesheet" href="index.css">
+</head>
 
 <body>
-    <video id="myvideo" controls autoplay>
-        <source src="<?php echo $file[0]; ?>" type="video/mp4">
-        Your browser does not support HTML5 video.
-    </video>
+    <div id="video">
+        <video id="myvideo" controls autoplay>
+            <source src="<?php echo $file[0]; ?>" type="video/mp4">
+            Your browser does not support HTML5 video.
+        </video>
+    </div>
+
+    <div id="history">
+        <?php include "history.php" ?>
+    </div>
 
     <script>
         myVideo = document.getElementById("myvideo");
@@ -91,7 +98,6 @@
     </script>
 
     <br>
-    <?php include "history.php" ?>
 </body>
 
 </html>

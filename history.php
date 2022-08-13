@@ -16,8 +16,9 @@
 
     $collection = $client->repeat->data;
 
-    $cursor = $collection->find();
-    //$cursor->sort(['playtime' => 1 ]);
+    $filter  = [];
+    $options = ['sort' => ['playtime' => -1]];
+    $cursor = $collection->find($filter, $options);
 
     foreach ( $cursor as $id => $value )
     {
