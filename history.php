@@ -23,13 +23,16 @@
     {
         $start = "";
         $end = "";
+        $repeat = "";
 
         if (isset($value['start'])){ $start = "&s=" . $value['start']; }
         if (isset($value['end'])){ $end = "&e=" . $value['end']; }
+        if (isset($value['playtime'])){ $repeat = $value['playtime']; }
 
         $file = glob('files/*-'. $value['name'] .'.mp4');
         echo "<a href=?v=" . $value['name'] . $start . $end . 
         ">";
+        echo $repeat . " : ";
         echo explode("/", $file[0])[1];
         echo "</a>";
         echo "<br>";
