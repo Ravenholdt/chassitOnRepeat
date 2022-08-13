@@ -22,21 +22,21 @@
 
     foreach ( $cursor as $id => $value )
     {
-        $start = "";
-        $end = "";
-        $repeat = "";
+        $DBstart = "";
+        $DBend = "";
+        $DBrepeat = "";
 
-        if (isset($value['start'])){ $start = "&s=" . $value['start']; }
-        if (isset($value['end'])){ $end = "&e=" . $value['end']; }
-        if (isset($value['playtime'])){ $repeat = $value['playtime']; }
+        if (isset($value['start'])){ $DBstart = "&s=" . $value['start']; }
+        if (isset($value['end'])){ $DBend = "&e=" . $value['end']; }
+        if (isset($value['playtime'])){ $DBrepeat = $value['playtime']; }
 
         $file = glob('files/*-'. $value['name'] .'.mp4');
-        echo "<a href=?v=" . $value['name'] . $start . $end . 
+        echo "<a href=?v=" . $value['name'] . $DBstart . $DBend . 
         ">";
-        echo $repeat . " : ";
-        echo explode("/", $file[0])[1];
+        echo $DBrepeat . " : ";
+        echo explode(".mp4", explode("/", $file[0])[1])[0];
         echo "</a>";
-        echo "<br>";
+        echo "<br>\n";
     }
 
     //var_dump($history);

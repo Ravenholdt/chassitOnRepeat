@@ -11,6 +11,16 @@
     /*background-color: #282828;
     z-index: 1010101010*/
 }
+
+#myvideo {
+    /*flex: 1;*/
+    position: relative;
+    width: 98%;
+    /*float: left;
+    height: 100%;*/
+    /*background-color: #282828;
+    z-index: 1010101010*/
+}
   
 #history {
     /*flex: 1;*/
