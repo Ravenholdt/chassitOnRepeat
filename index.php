@@ -83,7 +83,7 @@
         //setTimeout(update(deltaTime), 600000);
 
         myVideo.addEventListener('timeupdate', function() {
-            console.log(this.currentTime);
+            //console.log(this.currentTime);
             //console.log(deltaTime);
 
             if (this.currentTime < start) {
