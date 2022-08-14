@@ -2,19 +2,9 @@
     ini_set("display_errors", 1);
     error_reporting(E_ALL);
 
-    use Dotenv\Dotenv;
-    use MongoDB\Driver\ServerApi;
-
-    require __DIR__ . '/vendor/autoload.php';
-
-    $dotenv = Dotenv::createImmutable(__DIR__);
-    $dotenv->load();
-
-    $serverApi = new ServerApi(ServerApi::V1);
-    $client = new MongoDB\Client(
-        'mongodb+srv://'.$_ENV["MONGO_USER"].':'.$_ENV["MONGO_PASS"].'@null.t2drt9o.mongodb.net/?retryWrites=true&w=majority', [], ['serverApi' => $serverApi]);
-
     $collection = $client->repeat->data;
+
+    $totalTime = 0;
 
     $filter  = [];
     $options = ['sort' => ['playtime' => -1]];
@@ -28,7 +18,7 @@
 
         if (isset($value['start'])){ $DBstart = "&s=" . $value['start']; }
         if (isset($value['end'])){ $DBend = "&e=" . $value['end']; }
-        if (isset($value['playtime'])){ $DBrepeat = $value['playtime']; }
+        if (isset($value['playtime'])){ $DBrepeat = $value['playtime']; $totalTime += $DBrepeat; }
 
         $file = glob('files/*-'. $value['name'] .'.mp4');
         echo "<a href=?v=" . $value['name'] . $DBstart . $DBend . 

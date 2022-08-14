@@ -1,14 +1,15 @@
 <html>
 
-<?php
-    $name = $_GET["v"];
-    $start = $_GET["s"];
-    $end = $_GET["e"];
-
-    $file = glob('files/*-'. $name .'.mp4');
-?>
-
 <head>
+    <?php
+        $name = $_GET["v"];
+        $start = $_GET["s"];
+        $end = $_GET["e"];
+
+        $file = glob('files/*-'. $name .'.mp4');
+
+        include "dbconnect.php";
+    ?>
     <link rel="stylesheet" href="index.css">
 </head>
 
@@ -26,7 +27,7 @@
     </div>
 
     <div id="history">
-        <?php include "history.php" ?>
+        <?php include "history.php"; ?>
     </div>
 
     <script>
@@ -35,6 +36,8 @@
         let start = <?php echo $start ?>;
         let end = <?php echo $end ?>;
 
+        console.log(<?php echo "\"Total playtime: " . $totalTime . "\""; ?>);
+        console.log(<?php echo "\"Total playtime: " . $totalTime/(3600*24) . " Days\""; ?>);
         console.log(start);
         console.log(end);
 
