@@ -32,6 +32,7 @@
 
     <script>
         myVideo = document.getElementById("myvideo");
+        myVideo.volume = 0.5;
 
         let start = <?php echo $start ?>;
         let end = <?php echo $end ?>;
