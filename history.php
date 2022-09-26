@@ -21,8 +21,7 @@
         if (isset($value['playtime'])){ $DBrepeat = $value['playtime']; $totalTime += $DBrepeat; }
 
         $file = glob('files/*-'. $value['name'] .'.mp4');
-        echo "<a href=?v=" . $value['name'] . $DBstart . $DBend . 
-        ">";
+        echo "<a href=?v=" . $value['name'] . $DBstart . $DBend . ">";
         echo $DBrepeat . " : ";
         echo explode(".mp4", explode("/", $file[0])[1])[0];
         echo "</a>";

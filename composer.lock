@@ -186,16 +186,16 @@
         },
         {
             "name": "mongodb/mongodb",
-            "version": "1.13.0",
+            "version": "1.13.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mongodb/mongo-php-library.git",
-                "reference": "a9d82890fe0c104cf795e6c759c92484d12c027a"
+                "reference": "0b8555705d2f9c12ab2e5cebee6b594cdfe6b4e0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mongodb/mongo-php-library/zipball/a9d82890fe0c104cf795e6c759c92484d12c027a",
-                "reference": "a9d82890fe0c104cf795e6c759c92484d12c027a",
+                "url": "https://api.github.com/repos/mongodb/mongo-php-library/zipball/0b8555705d2f9c12ab2e5cebee6b594cdfe6b4e0",
+                "reference": "0b8555705d2f9c12ab2e5cebee6b594cdfe6b4e0",
                 "shasum": ""
             },
             "require": {
@@ -247,7 +247,7 @@
                 "mongodb",
                 "persistence"
             ],
-            "time": "2022-07-14T05:07:37+00:00"
+            "time": "2022-09-08T03:32:09+00:00"
         },
         {
             "name": "phpoption/phpoption",

@@ -9,6 +9,8 @@
     $start = $_GET["s"];
     $end = $_GET["e"];
 
+    //if ($name == "OKWVNeDYZmU"){ exit("Staven Misshandlar"); }
+
     $file = glob('files/*-'. $name .'.mp4');
 
     if (count($file) == 1){

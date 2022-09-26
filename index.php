@@ -1,16 +1,22 @@
+<?php
+    $name = "";
+    $start = "0";
+    $end = "1000000";
+
+    if (isset($_GET["v"])){ $name = $_GET["v"]; }
+    if (isset($_GET["s"])){ $start = $_GET["s"]; }
+    if (isset($_GET["e"])){ $end = $_GET["e"]; }
+
+    $file = glob('files/*-'. $name .'.mp4');
+
+    include "dbconnect.php";
+?>
+
 <html>
 
 <head>
-    <?php
-        $name = $_GET["v"];
-        $start = $_GET["s"];
-        $end = $_GET["e"];
-
-        $file = glob('files/*-'. $name .'.mp4');
-
-        include "dbconnect.php";
-    ?>
     <link rel="stylesheet" href="index.css">
+    <title><?php echo explode(".mp4", explode("/", $file[0])[1])[0] ?> - Chassit on Repeat</title>
 </head>
 
 <body>
@@ -21,8 +27,10 @@
         </video>
 
         <?php
+        /*
         if (!isset($_GET["s"])){ $start = "0"; }
         if (!isset($_GET["e"])){ $end = "1000000"; }
+        */
         ?>
     </div>
 
@@ -40,28 +48,7 @@
         console.log(<?php echo "\"Total playtime: " . $totalTime . "\""; ?>);
         console.log(<?php echo "\"Total playtime: " . $totalTime/(3600*24) . " Days\""; ?>);
         console.log(start);
-        console.log(end);
-
-        /*myVideo.onloadedmetadata = function() {
-            console.log('metadata loaded!');
-            console.log(this.duration);//this refers to myVideo
-            if (end > 999999){
-                end = this.duration;
-            }
-        };*/
-
-        //var deltaTime = 0;
-        //var lastTime = myVideo.currentTime;
-
-        /*
-        document.getElementById('myvideo').addEventListener('loadedmetadata', function() {
-            this.currentTime = start; 
-        }, false);
-        */
-
-        //echo myVideo.duration;
-
-        
+        console.log(end);        
 
         function update(t) {
             deltaTime = 0;
@@ -81,24 +68,15 @@
             console.log(xmlHttp.responseText);
         }
 
-        //setTimeout(update(deltaTime), 600000);
-
         myVideo.addEventListener('timeupdate', function() {
-            //console.log(this.currentTime);
-            //console.log(deltaTime);
 
             if (this.currentTime < start) {
                 this.currentTime = start;
-                //lastTime = this.currentTime;
                 console.log("Jump Forward");
             }
 
-            //deltaTime += this.currentTime - lastTime;
-            //lastTime = this.currentTime;
-
             if (this.currentTime > end) {
                 this.currentTime = start;
-                //lastTime = this.currentTime;
                 console.log("Restart");
                 myVideo.play();
                 update(end-start);
@@ -107,7 +85,6 @@
 
         myVideo.addEventListener('ended', function() {
             this.currentTime = start;
-            //lastTime = this.currentTime;
             myVideo.play();
             console.log("Ended");
             update(this.duration-start);
