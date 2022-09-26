@@ -1,35 +1,38 @@
 <?php
-    ini_set("display_errors", 1);
-    error_reporting(E_ALL);
 
-    include "dbconnect.php";
+use Chassit\Repeat\DB;
 
-    $name = $_GET["v"];
-    $time = $_GET["t"];
-    $start = $_GET["s"];
-    $end = $_GET["e"];
+require_once "init.php";
+
+if ($_SERVER['REQUEST_METHOD'] == "POST") {
+    $input = json_decode(file_get_contents("php://input"));
+    $name = $input->v;
+    $time = $input->t;
+    $start = $input->s ?? null;
+    $end = $input->e ?? null;
 
     //if ($name == "OKWVNeDYZmU"){ exit("Staven Misshandlar"); }
 
-    $file = glob('files/*-'. $name .'.mp4');
+    $file = glob('files/*-' . $name . '.mp4');
 
-    if (count($file) == 1){
-        $collection = $client->repeat->data;
-    
-        $insertOneResult = $collection->updateOne(
+    if (count($file) == 1) {
+        $insertOneResult = DB::getRepeatCollection()->updateOne(
             ['name' => $name],
             [
-            '$set' => [
-                'lastplayed' => time(),
-                'start' => $start,
-                'end' => $end
-            ], 
-            '$inc' => [
-                'playtime' => (int)$time]
+                '$set' => [
+                    'lastplayed' => time(),
+                    'start' => $start,
+                    'end' => $end
+                ],
+                '$inc' => [
+                    'playtime' => (int)$time]
             ],
             ['upsert' => true]
         );
     }
-
     //$deleteResult = $collection->deleteMany([]);
-?>
+
+} else {
+    http_response_code(400);
+    echo "Unsupported";
+}

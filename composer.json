@@ -1,5 +1,22 @@
 {
+    "name": "ravenholt/chassiet-on-repeat",
+    "minimum-stability": "dev",
+    "license": "All Rights Reserved",
+    "authors": [
+        {
+            "name": "Null",
+            "email": "null@totallylegit.se"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Chassit\\Repeat\\": "./classes/"
+        }
+    },
     "require": {
+        "php": "^7.4",
+        "ext-json": "*",
+        "ext-mongodb": "*",
         "mongodb/mongodb": "^1.13",
         "vlucas/phpdotenv": "^5.4"
     }
