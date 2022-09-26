@@ -67,8 +67,8 @@ $file = "files/$video->name-$video->id.mp4"
 
     let start = <?= $start ?>;
     let end = <?= $end ?>;
-    console.log(<?php echo "\"Total playtime: " . $totalTime . "\""; ?>);
-    console.log(<?php echo "\"Total playtime: " . $totalTime/(3600*24) . " Days\""; ?>);
+    console.log(<?php echo "\"Total playtime: " . $totalTime . "s\""; ?>);
+    console.log(<?php echo "\"Total playtime: " . History::toDisplayTime($totalTime, true) . "\""; ?>);
     console.log(start);
     console.log(end);
 
