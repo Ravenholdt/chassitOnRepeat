@@ -69,6 +69,30 @@ class History
         return $time;
     }
 
+    public static function toDisplayTime(int $playtime, bool $showDays = false): string
+    {
+        $secondsInAMinute = 60;
+        $secondsInAnHour  = 3600;
+        $secondsInADay    = 86400;
+
+        $hourSeconds = $showDays ? $playtime % $secondsInADay: $playtime;
+        $minuteSeconds = $hourSeconds % $secondsInAnHour;
+        $remainingSeconds = $minuteSeconds % $secondsInAMinute;
+
+        $days = floor($playtime / $secondsInADay);
+        $hours = floor($hourSeconds / 3600);
+        $minutes = floor($minuteSeconds / $secondsInAMinute);
+        $seconds = ceil($remainingSeconds);
+
+        return $days > 0 && $showDays ?
+            sprintf("%dd %02dh %02dm %02ds", $days, $hours, $minutes, $seconds):
+            ($hours > 0 ?
+                sprintf("%dh %02dm %02ds", $hours, $minutes, $seconds) :
+                ($minutes > 0 ?
+                    sprintf("%dm %02ds", $minutes, $seconds) :
+                    sprintf("%ds", $seconds)));
+    }
+
     /**
      * Renders a list of links to videos
      * @return void
@@ -91,7 +115,7 @@ class History
                 $args .= "&e=$video->end";
             }
 
-            $time = $video->playtime > 0 ? $video->playtime : "";
+            $time = $video->playtime > 0 ? self::toDisplayTime($video->playtime): "";
             echo "<a href=\"?v=$video->id$args\"> $time : $video->name</a><br>";
         }
     }
