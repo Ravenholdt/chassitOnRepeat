@@ -11,6 +11,11 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
     $start = $input->s ?? null;
     $end = $input->e ?? null;
 
+    if ($start !== null)
+        $start = is_numeric($start) ? floatval($start) : null;
+    if ($end !== null)
+        $end = is_numeric($end) ? floatval($end) : null;
+
     //if ($name == "OKWVNeDYZmU"){ exit("Staven Misshandlar"); }
 
     $file = glob('files/*-' . $name . '.mp4');

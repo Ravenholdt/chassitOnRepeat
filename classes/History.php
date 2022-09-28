@@ -7,7 +7,7 @@ class History
     /**
      * @var Video[]
      */
-    static array $allVideos = [];
+    static ?array $allVideos = null;
 
     /**
      * Returns a list of videos found on the files directory
@@ -27,6 +27,22 @@ class History
     }
 
     /**
+     * @param array|object $arr
+     * @param string $key
+     * @return float|null
+     */
+    private static function getFloatVal($arr, string $key): ?float
+    {
+        if (isset($arr[$key]))
+        {
+            $val = $arr[$key];
+            return is_numeric($val) ? floatval($val): null;
+        }
+
+        return null;
+    }
+
+    /**
      * Returns a list of videos with updated repeats data
      * @param Video[] $videos A list of videos to merge the database data with
      * @return Video[]
@@ -40,13 +56,13 @@ class History
             // Check if video is available, update data if it is otherwise add a placeholder
             if (isset($videos[$id])) {
                 $video = $videos[$id];
-                $video->start = $value["start"] ?? null;
-                $video->end = $value["end"] ?? null;
+                $video->start = self::getFloatVal($value, 'start');
+                $video->end = self::getFloatVal($value, 'end');
                 $video->playtime = $value["playtime"] ?? 0;
 
                 $videos[$id] = $video;
             } else {
-                $videos[$id] = new Video($value["name"], $value["name"], $value["start"] ?? null, $value["end"] ?? null, $value["playtime"] ?? 0);
+                $videos[$id] = new Video($value["name"], $value["name"], self::getFloatVal($value, 'start'), self::getFloatVal($value, 'end'), $value["playtime"] ?? 0);
             }
         }
         return $videos;
@@ -56,7 +72,7 @@ class History
      * Loads all the videos from file and the database
      * @return void
      */
-    public static function loadVideos()
+    private static function loadVideos()
     {
         $files = self::getFiles();
         self::$allVideos = self::getRepeats($files);
@@ -64,6 +80,9 @@ class History
 
     public static function getTotalTime(): int
     {
+        if (self::$allVideos == null)
+            self::loadVideos();
+
         $time = 0;
         foreach (self::$allVideos as $video) $time += $video->playtime;
         return $time;
@@ -99,6 +118,9 @@ class History
      */
     public static function render()
     {
+        if (self::$allVideos == null)
+            self::loadVideos();
+
         // Sort videos before displaying
         usort(self::$allVideos, function (Video $a, Video $b) {
             return $a->playtime == 0 && $b->playtime == 0 ?
@@ -108,10 +130,10 @@ class History
 
         foreach (self::$allVideos as $video) {
             $args = "";
-            if ($video->start > 0) {
+            if ($video->start !== null && $video->start > 0) {
                 $args .= "&s=$video->start";
             }
-            if ($video->end > 0) {
+            if ($video->end !== null && $video->end > 0) {
                 $args .= "&e=$video->end";
             }
 
