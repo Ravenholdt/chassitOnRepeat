@@ -6,11 +6,11 @@ class Video
 {
     public string $name;
     public string $id;
-    public ?string $start;
-    public ?string $end;
+    public ?float $start;
+    public ?float $end;
     public int $playtime;
 
-    public function __construct(string $id, string $name, string $start = null, string $end = null, int $playtime = 0)
+    public function __construct(string $id, string $name, ?float $start = null, ?float $end = null, int $playtime = 0)
     {
         $this->name = $name;
         $this->id = $id;

@@ -14,24 +14,32 @@ function getVideo($id): Video
     return new Video("", "");
 }
 
+function getFloatParam($key, ?float $defaultVal = null): ?float
+{
+    if (isset($_GET[$key]) && is_numeric($_GET[$key]))
+        return floatval($_GET[$key]);
+    return $defaultVal;
+}
+
 $id = "";
-$start = "0";
-$end = "1000000";
+$start = getFloatParam('s', 0);
+$end = getFloatParam('e', 1000000);
 
 if (isset($_GET["v"])) {
     $id = $_GET["v"];
 }
-if (isset($_GET["s"])) {
-    $start = $_GET["s"];
-}
-if (isset($_GET["e"])) {
-    $end = $_GET["e"];
-}
+
+/*
+if (!isset($_GET["s"])){ $start = "0"; }
+if (!isset($_GET["e"])){ $end = "1000000"; }
+*/
 
 $video = getVideo($id);
-$file = "files/$video->name-$video->id.mp4"
-?>
+$file = "files/$video->name-$video->id.mp4";
 
+$totalTime = History::getTotalTime();
+?>
+<!DOCTYPE html>
 <html lang="sv">
 <head>
     <link rel="stylesheet" href="index.css">
@@ -44,20 +52,11 @@ $file = "files/$video->name-$video->id.mp4"
         <source src="<?= $file ?>" type="video/mp4">
         Your browser does not support HTML5 video.
     </video>
-
-    <?php
-    /*
-    if (!isset($_GET["s"])){ $start = "0"; }
-    if (!isset($_GET["e"])){ $end = "1000000"; }
-    */
-    ?>
 </div>
 
 <div id="history">
     <?php
-    History::loadVideos();
     History::render();
-    $totalTime = History::getTotalTime();
     ?>
 </div>
 
@@ -73,16 +72,6 @@ $file = "files/$video->name-$video->id.mp4"
     console.log(end);
 
     function update(t) {
-        <?php
-        $args = "";
-
-        if (isset($_GET["s"])) {
-            $args .= "&s={$_GET["s"]}";
-        }
-        if (isset($_GET["e"])) {
-            $args .= "&e={$_GET["e"]}";
-        }
-        ?>
         fetch("update.php", {
             method: 'POST',
             headers: {
@@ -91,10 +80,13 @@ $file = "files/$video->name-$video->id.mp4"
             body: JSON.stringify({
                 v: '<?= $id ?>',
                 t: t,
-                s: '<?= $_GET["s"] ?? null ?>',
-                e: '<?= $_GET["e"] ?? null ?>',
+                s: <?= getFloatParam('s') ?? 'null' ?>,
+                e: <?= getFloatParam('e') ?? 'null' ?>,
             })
-        }).then(value => console.log(value));
+        }).then(async value => {
+            if (!value.ok)
+                console.log(value.status, value.statusText, await value.text());
+        });
     }
 
     myVideo.addEventListener('timeupdate', function () {
