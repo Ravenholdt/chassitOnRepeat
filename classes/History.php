@@ -108,10 +108,10 @@ class History
 
         foreach (self::$allVideos as $video) {
             $args = "";
-            if ($video->start !== null) {
+            if ($video->start > 0) {
                 $args .= "&s=$video->start";
             }
-            if ($video->end !== null) {
+            if ($video->end > 0) {
                 $args .= "&e=$video->end";
             }
 
