@@ -26,6 +26,14 @@ class History
         return $videos;
     }
 
+    public static function getRandomVideo(): Video
+    {
+        $files = History::getFiles();
+        $video = $files[rand(0, sizeof($files))];
+        $video = History::getRepeats([$video])[0];
+        return $video;
+    }
+
     /**
      * @param array|object $arr
      * @param string $key
