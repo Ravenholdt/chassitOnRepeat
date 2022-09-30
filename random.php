@@ -15,8 +15,8 @@ if (!isset($_GET["e"])){ $end = "1000000"; }
 $video = History::getRandomVideo();
 $file = "files/$video->name-$video->id.mp4";
 
-$start = $video->$start ?? 0;
-$end = $video->$end ?? 100000000;
+$start = isset($video->$start) ? $video->$start : 0;
+$end = isset($video->$end) ? $video->$end : 100000000;
 
 $totalTime = History::getTotalTime();
 ?>
@@ -28,12 +28,10 @@ $totalTime = History::getTotalTime();
 </head>
 
 <body>
-<div id="video">
-    <video id="myvideo" controls autoplay>
+    <video id="myvideo" controls autoplay style="width:100%;">
         <source src="<?= $file ?>" type="video/mp4">
         Your browser does not support HTML5 video.
     </video>
-</div>
 
 <script>
     myVideo = document.getElementById("myvideo");
@@ -64,24 +62,9 @@ $totalTime = History::getTotalTime();
         });
     }
 
-    myVideo.addEventListener('timeupdate', function () {
-
-        if (this.currentTime < start) {
-            this.currentTime = start;
-            console.log("Jump Forward");
-        }
-
-        if (this.currentTime > end) {
-            this.currentTime = start;
-            console.log("Restart");
-            myVideo.play();
-            update(end - start);
-        }
-    }, false);
-
-    myVideo.addEventListener('ended', function () {
+    function endHandler(){
         update(this.duration - start);
-        fetch("/switch.php").then(e => e.json()).then(e => {
+        fetch("/switchrandom.php").then(e => e.json()).then(e => {
             start = e.start ?? 0;
             end = e.end ?? 100000000;
             myVideo.src = `files/${e.name}-${e.id}.mp4`;
@@ -90,9 +73,25 @@ $totalTime = History::getTotalTime();
             console.log("Switched")
         }).catch(err => console.error(err))
         console.log("Ended");
+        myVideo.play();
+    }
+
+    myVideo.addEventListener('timeupdate', function () {
+
+        if (this.currentTime < start) {
+            this.currentTime = start;
+            console.log("Jump Forward");
+        }
+
+        if (this.currentTime > end) {
+            endHandler();
+            console.log("Restart");
+            
+        }
     }, false);
 
-    myVideo.play();
+    myVideo.addEventListener('ended', endHandler, false);
+        
 </script>
 
 <br>
