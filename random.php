@@ -15,8 +15,8 @@ if (!isset($_GET["e"])){ $end = "1000000"; }
 $video = History::getRandomVideo();
 $file = "files/$video->name-$video->id.mp4";
 
-$start = isset($video->$start) ? $video->$start : 0;
-$end = isset($video->$end) ? $video->$end : 100000000;
+$start = isset($video->start) ? $video->start : 0;
+$end = isset($video->end) ? $video->end : 100000000;
 
 $totalTime = History::getTotalTime();
 ?>
@@ -39,6 +39,7 @@ $totalTime = History::getTotalTime();
 
     let start = <?= $start ?>;
     let end = <?= $end ?>;
+    let id = '<?= $video->id ?>';
     console.log(<?php echo "\"Total playtime: " . $totalTime . "s\""; ?>);
     console.log(<?php echo "\"Total playtime: " . History::toDisplayTime($totalTime, true) . "\""; ?>);
     console.log(start);
@@ -51,10 +52,10 @@ $totalTime = History::getTotalTime();
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                v: '<?= $id ?>',
+                v: id,
                 t: t,
-                s: <?= getFloatParam('s') ?? 'null' ?>,
-                e: <?= getFloatParam('e') ?? 'null' ?>,
+                s: start,
+                e: end,
             })
         }).then(async value => {
             if (!value.ok)
@@ -67,6 +68,7 @@ $totalTime = History::getTotalTime();
         fetch("/switchrandom.php").then(e => e.json()).then(e => {
             start = e.start ?? 0;
             end = e.end ?? 100000000;
+            id = e.id;
             myVideo.src = `files/${e.name}-${e.id}.mp4`;
             this.currentTime = start;
             myVideo.play();
