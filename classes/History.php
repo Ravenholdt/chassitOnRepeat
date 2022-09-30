@@ -28,9 +28,8 @@ class History
 
     public static function getRandomVideo(): Video
     {
-        $files = array_values(History::getFiles());
+        $files = array_values(self::getRepeats(self::getFiles()));
         $video = $files[rand(0, sizeof($files))];
-        $video = History::getRepeats([$video])[0];
         return $video;
     }
 
