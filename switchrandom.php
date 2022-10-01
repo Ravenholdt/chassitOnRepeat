@@ -5,6 +5,7 @@
 
    if($_SERVER["REQUEST_METHOD"] == "GET"){
     $video = History::getRandomVideo();
+    header("Content-Type: application/json", true);
     echo json_encode($video);
    }
    else {

@@ -54,8 +54,8 @@ $totalTime = History::getTotalTime();
             body: JSON.stringify({
                 v: id,
                 t: t,
-                s: start,
-                e: end,
+                s: start === 0 ? null: start,
+                e: end === 100000000 ? null : end,
             })
         }).then(async value => {
             if (!value.ok)
@@ -66,16 +66,17 @@ $totalTime = History::getTotalTime();
     function endHandler(){
         update(this.duration - start);
         fetch("/switchrandom.php").then(e => e.json()).then(e => {
+            console.log(e);
             start = e.start ?? 0;
             end = e.end ?? 100000000;
             id = e.id;
             myVideo.src = `files/${e.name}-${e.id}.mp4`;
-            this.currentTime = start;
+            myVideo.currentTime = start;
+            console.log(`${start}, ${end}, ${id}, ${myVideo.currentTime} & ${myVideo.src}`);
             myVideo.play();
             console.log("Switched")
         }).catch(err => console.error(err))
         console.log("Ended");
-        myVideo.play();
     }
 
     myVideo.addEventListener('timeupdate', function () {
@@ -86,9 +87,8 @@ $totalTime = History::getTotalTime();
         }
 
         if (this.currentTime > end) {
-            endHandler();
             console.log("Restart");
-            
+            endHandler();
         }
     }, false);
 
