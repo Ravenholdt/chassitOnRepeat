@@ -14,10 +14,10 @@
         }
     },
     "require": {
-        "php": "^7.4",
+        "php": "^7.4|^8.1",
         "ext-json": "*",
         "ext-mongodb": "*",
-        "mongodb/mongodb": "^1.13",
+        "mongodb/mongodb": "^1.11",
         "vlucas/phpdotenv": "^5.4"
     }
 }
