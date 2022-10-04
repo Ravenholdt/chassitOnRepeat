@@ -15,8 +15,8 @@ if (!isset($_GET["e"])){ $end = "1000000"; }
 $video = History::getRandomVideo();
 $file = "files/$video->name-$video->id.mp4";
 
-$start = isset($video->start) ? $video->start : 0;
-$end = isset($video->end) ? $video->end : 100000000;
+$start = $video->start ?? 0;
+$end = $video->end ?? 100000000;
 
 $totalTime = History::getTotalTime();
 ?>
@@ -24,22 +24,29 @@ $totalTime = History::getTotalTime();
 <html lang="sv">
 <head>
     <link rel="stylesheet" href="index.css">
-    <title><?= $video->name ?> - Chassit on Repeat</title>
+    <title>(0)Chassit radio - <?= $video->name ?></title>
 </head>
 
 <body>
-    <video id="myvideo" controls autoplay style="width:100%;">
+    <video id="myvideo" controls autoplay style="width:100%;max-height: 800px;">
         <source src="<?= $file ?>" type="video/mp4">
         Your browser does not support HTML5 video.
     </video>
+    <h4 id="videoTitle"> <?= $video->name ?> </h4>
+    <p id="videoLoops"> <?= History::toDisplayTime($video->playtime, true) ?> </p>
+    <p id="switches"> 0 videos resisted </p>
 
 <script>
-    myVideo = document.getElementById("myvideo");
+    const myVideo = document.getElementById("myvideo");
     myVideo.volume = 0.5;
+    const videoTitle = document.getElementById("videoTitle");
+    const videoLoops = document.getElementById("videoLoops");
+    const videoSwitches = document.getElementById("switches");
 
     let start = <?= $start ?>;
     let end = <?= $end ?>;
     let id = '<?= $video->id ?>';
+    let switches = 0;
     console.log(<?php echo "\"Total playtime: " . $totalTime . "s\""; ?>);
     console.log(<?php echo "\"Total playtime: " . History::toDisplayTime($totalTime, true) . "\""; ?>);
     console.log(start);
@@ -73,10 +80,26 @@ $totalTime = History::getTotalTime();
             myVideo.src = `files/${e.name}-${e.id}.mp4`;
             myVideo.currentTime = start;
             console.log(`${start}, ${end}, ${id}, ${myVideo.currentTime} & ${myVideo.src}`);
+            videoTitle.innerText = e.name;
+            videoLoops.innerText = `Loops: ${getTimeStr(e.playtime)}`;
+            switches++;
+            videoSwitches.innerText = `${switches} videos resisted`;
+            document.title = `(${switches})Chassit radio - ${e.name}`;
             myVideo.play();
             console.log("Switched")
         }).catch(err => console.error(err))
         console.log("Ended");
+    }
+
+    function getTimeStr(time){
+        let days = Math.floor(time / 86400);
+        time -= days * 86400;
+        let hours = Math.floor(time / 3600);
+        time -= hours * 3600;
+        let minutes = Math.floor(time / 60);
+        time -= minutes * 60;
+        let seconds = Math.floor(time % 60);
+        return `${days}d ${hours}h ${minutes}m ${seconds}s`;
     }
 
     myVideo.addEventListener('timeupdate', function () {
@@ -93,7 +116,7 @@ $totalTime = History::getTotalTime();
     }, false);
 
     myVideo.addEventListener('ended', endHandler, false);
-        
+
 </script>
 
 <br>
