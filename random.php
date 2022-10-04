@@ -33,7 +33,7 @@ $totalTime = History::getTotalTime();
         Your browser does not support HTML5 video.
     </video>
     <h4 id="videoTitle"> <?= $video->name ?> </h4>
-    <p id="videoLoops"> <?= History::toDisplayTime($video->playtime, true) ?> </p>
+    <p id="videoLoops"> Playtime: <?= History::toDisplayTime($video->playtime, true) ?> </p>
     <p id="switches"> 0 videos resisted </p>
 
 <script>
@@ -81,7 +81,7 @@ $totalTime = History::getTotalTime();
             myVideo.currentTime = start;
             console.log(`${start}, ${end}, ${id}, ${myVideo.currentTime} & ${myVideo.src}`);
             videoTitle.innerText = e.name;
-            videoLoops.innerText = `Loops: ${getTimeStr(e.playtime)}`;
+            videoLoops.innerText = `Playtime: ${getTimeStr(e.playtime)}`;
             switches++;
             videoSwitches.innerText = `${switches} videos resisted`;
             document.title = `(${switches})Chassit radio - ${e.name}`;
