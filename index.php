@@ -52,6 +52,10 @@ $totalTime = History::getTotalTime();
         <source src="<?= $file ?>" type="video/mp4">
         Your browser does not support HTML5 video.
     </video>
+    <h1> <?= $video->name ?> </h1>
+    <p id="videoloops"> Playtime:  <?= History::toDisplayTime($video->playtime, true) ?> </p>
+    <input id="start" placeholder="start" type="number" value="<?=$start == 0 ? "": $start ?>"/>
+    <input id="end" placeholder="end" type="number" value="<?=$end == 1000000 ? "": $end ?>"/>
 </div>
 
 <div id="history">
@@ -61,11 +65,13 @@ $totalTime = History::getTotalTime();
 </div>
 
 <script>
-    myVideo = document.getElementById("myvideo");
+    const myVideo = document.getElementById("myvideo");
     myVideo.volume = 0.5;
+    const videoLoops = document.getElementById("videoloops");
 
     let start = <?= $start ?>;
     let end = <?= $end ?>;
+    let playtime = <?= $video->playtime ?>;
     console.log(<?php echo "\"Total playtime: " . $totalTime . "s\""; ?>);
     console.log(<?php echo "\"Total playtime: " . History::toDisplayTime($totalTime, true) . "\""; ?>);
     console.log(start);
@@ -80,14 +86,57 @@ $totalTime = History::getTotalTime();
             body: JSON.stringify({
                 v: '<?= $id ?>',
                 t: t,
-                s: <?= getFloatParam('s') ?? 'null' ?>,
-                e: <?= getFloatParam('e') ?? 'null' ?>,
+                s: start > 0 ? start : null,
+                e: end === 1000000 ? null : end,
             })
         }).then(async value => {
             if (!value.ok)
                 console.log(value.status, value.statusText, await value.text());
+            else{
+                playtime += t;
+                videoLoops.innerText = "Playtime: " + getTimeStr(playtime);
+            }
+
         });
     }
+
+    function getTimeStr(time){
+        let days = Math.floor(time / 86400);
+        time -= days * 86400;
+        let hours = Math.floor(time / 3600);
+        time -= hours * 3600;
+        let minutes = Math.floor(time / 60);
+        time -= minutes * 60;
+        let seconds = Math.floor(time % 60);
+        return `${days}d ${hours}h ${minutes}m ${seconds}s`;
+    }
+
+    document.getElementById("start").onchange((event) =>{
+        let s = event.target.value;
+        if (s === "")
+            start = 0;
+        else {
+            s = parseFloat(s);
+            if(isNaN(s)) {
+                return;
+            }
+            start = s;
+        }
+    });
+
+    document.getElementById("end").onchange((event) => {
+        let e = event.target.value;
+        if (e === "")
+            end = 1000000;
+        else {
+            e = parseFloat(e);
+            if(isNaN(e)) {
+                return;
+            }
+            end = e;
+        }
+
+    });
 
     myVideo.addEventListener('timeupdate', function () {
 
