@@ -34,7 +34,7 @@ if (!isset($_GET["s"])){ $start = "0"; }
 if (!isset($_GET["e"])){ $end = "1000000"; }
 */
 
-$video = getVideo($id);
+$video = History::getRepeats([getVideo($id)])[0];
 $file = "files/$video->name-$video->id.mp4";
 
 $totalTime = History::getTotalTime();
@@ -111,7 +111,7 @@ $totalTime = History::getTotalTime();
         return `${days}d ${hours}h ${minutes}m ${seconds}s`;
     }
 
-    document.getElementById("start").onchange((event) =>{
+    document.getElementById("start").addEventListener("change",(event) =>{
         let s = event.target.value;
         if (s === "")
             start = 0;
@@ -124,7 +124,7 @@ $totalTime = History::getTotalTime();
         }
     });
 
-    document.getElementById("end").onchange((event) => {
+    document.getElementById("end").addEventListener("change", (event) => {
         let e = event.target.value;
         if (e === "")
             end = 1000000;

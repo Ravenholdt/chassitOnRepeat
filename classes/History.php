@@ -54,7 +54,7 @@ class History
      * @param Video[] $videos A list of videos to merge the database data with
      * @return Video[]
      */
-    private static function getRepeats(array $videos): array
+    public static function getRepeats(array $videos): array
     {
         $cursor = DB::getRepeatCollection()->find([], ['sort' => ['playtime' => -1]]);
         foreach ($cursor as $value) {
