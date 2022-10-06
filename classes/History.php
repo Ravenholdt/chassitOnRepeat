@@ -60,7 +60,7 @@ class History
         foreach ($cursor as $value) {
             $id = $value["name"];
 
-            // Check if video is available, update data if it is otherwise add a placeholder
+            // Check if video is available, update data if it is otherwise add a placeholder...
             if (isset($videos[$id])) {
                 $video = $videos[$id];
                 $video->start = self::getFloatVal($value, 'start');
@@ -68,8 +68,8 @@ class History
                 $video->playtime = $value["playtime"] ?? 0;
 
                 $videos[$id] = $video;
-            } else {
-                $videos[$id] = new Video($value["name"], $value["name"], self::getFloatVal($value, 'start'), self::getFloatVal($value, 'end'), $value["playtime"] ?? 0);
+            } else { // ...but it's without the placeholder.
+                //$videos[$id] = new Video($value["name"], $value["name"], self::getFloatVal($value, 'start'), self::getFloatVal($value, 'end'), $value["playtime"] ?? 0);
             }
         }
         return $videos;
