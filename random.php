@@ -5,18 +5,16 @@ use Chassit\Repeat\Video;
 
 require_once "init.php";
 
-
-
 /*
 if (!isset($_GET["s"])){ $start = "0"; }
-if (!isset($_GET["e"])){ $end = "1000000"; }
+if (!isset($_GET["e"])){ $end = "90000"; }
 */
 
 $video = History::getRandomVideo();
 $file = "files/$video->name-$video->id.mp4";
 
 $start = $video->start ?? 0;
-$end = $video->end ?? 100000000;
+$end = $video->end ?? 90000;
 
 $totalTime = History::getTotalTime();
 ?>
@@ -62,7 +60,7 @@ $totalTime = History::getTotalTime();
                 v: id,
                 t: t,
                 s: start === 0 ? null: start,
-                e: end === 100000000 ? null : end,
+                e: end === 90000 ? null : end,
             })
         }).then(async value => {
             if (!value.ok)
@@ -75,7 +73,7 @@ $totalTime = History::getTotalTime();
         fetch("/switchrandom.php").then(e => e.json()).then(e => {
             console.log(e);
             start = e.start ?? 0;
-            end = e.end ?? 100000000;
+            end = e.end ?? 90000;
             id = e.id;
             myVideo.src = `files/${e.name}-${e.id}.mp4`;
             myVideo.currentTime = start;

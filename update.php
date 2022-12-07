@@ -16,6 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
     if ($end !== null)
         $end = is_numeric($end) ? floatval($end) : null;
 
+    if ($end > 90000){ exit("Playtime error."); }
     //if ($name == "OKWVNeDYZmU"){ exit("Staven Misshandlar"); }
 
     $file = glob('files/*-' . $name . '.mp4');

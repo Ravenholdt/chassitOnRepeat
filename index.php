@@ -23,7 +23,7 @@ function getFloatParam($key, ?float $defaultVal = null): ?float
 
 $id = "";
 $start = getFloatParam('s', 0);
-$end = getFloatParam('e', 1000000);
+$end = getFloatParam('e', 90000);
 
 if (isset($_GET["v"])) {
     $id = $_GET["v"];

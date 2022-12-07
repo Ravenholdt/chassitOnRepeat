@@ -30,6 +30,18 @@ class History
     {
         $files = array_values(self::getRepeats(self::getFiles()));
         $video = $files[rand(0, sizeof($files))];
+
+        /*
+        // djNull
+        foreach ($files as $key => $value) {
+            //echo $key . " " . $value->name . " " . $value->id . " " . $value->playtime . "<br>";
+            if ($value->id == "JE37e1eK2mY"){
+                return $value;
+            }
+        }
+        */
+        
+        
         return $video;
     }
 
