@@ -55,7 +55,7 @@ $totalTime = History::getTotalTime();
     <h1> <?= $video->name ?> </h1>
     <p id="videoloops"> Playtime:  <?= History::toDisplayTime($video->playtime, true) ?> </p>
     <input id="start" placeholder="start" type="number" value="<?=$start == 0 ? "": $start ?>"/>
-    <input id="end" placeholder="end" type="number" value="<?=$end == 1000000 ? "": $end ?>"/>
+    <input id="end" placeholder="end" type="number" value="<?=$end == 90000 ? "": $end ?>"/>
 </div>
 
 <div id="history">
@@ -87,7 +87,7 @@ $totalTime = History::getTotalTime();
                 v: '<?= $id ?>',
                 t: t,
                 s: start > 0 ? start : null,
-                e: end === 1000000 ? null : end,
+                e: end === 90000 ? null : end,
             })
         }).then(async value => {
             if (!value.ok)
@@ -127,7 +127,7 @@ $totalTime = History::getTotalTime();
     document.getElementById("end").addEventListener("change", (event) => {
         let e = event.target.value;
         if (e === "")
-            end = 1000000;
+            end = 90000;
         else {
             e = parseFloat(e);
             if(isNaN(e)) {
