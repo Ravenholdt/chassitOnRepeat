@@ -11,6 +11,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
     $start = $input->s ?? null;
     $end = $input->e ?? null;
 
+    if ($time < 0){ http_response_code(400); exit("Playtime error."); }
     if ($time > 90000){ http_response_code(400); exit("Playtime error."); }
     //if ($name == "OKWVNeDYZmU"){ http_response_code(418); exit("Staven Misshandlar"); }
 
