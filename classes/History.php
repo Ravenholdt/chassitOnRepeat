@@ -149,14 +149,22 @@ class History
 
         foreach (self::$allVideos as $video) {
             $args = "";
-            if ($video->start !== null && $video->start > 0) {
+            /*if ($video->start !== null && $video->start > 0) {
                 $args .= "&s=$video->start";
             }
             if ($video->end !== null && $video->end > 0) {
                 $args .= "&e=$video->end";
-            }
+            }*/
 
             $time = $video->playtime > 0 ? self::toDisplayTime($video->playtime): "";
+
+            // If Yoda torture has been playing for more than
+            // 200 hours, play other yoda instead.
+            if ($video->id == "OKWVNeDYZmU" && $video->playtime > 720000) {
+                $video->id = "IUMCyAR6U0";
+                $args = "&s=13.4&e=243";
+            }
+
             echo "<a href=\"?v=$video->id$args\"> $time : $video->name</a><br>";
         }
     }

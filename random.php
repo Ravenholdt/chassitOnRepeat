@@ -51,6 +51,7 @@ $totalTime = History::getTotalTime();
     console.log(end);
 
     function update(t) {
+        return;
         fetch("../update.php", {
             method: 'POST',
             headers: {

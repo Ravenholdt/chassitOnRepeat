@@ -2,6 +2,7 @@
 
 use Chassit\Repeat\History;
 use Chassit\Repeat\Video;
+use Chassit\Repeat\DB;
 
 require_once "init.php";
 
@@ -22,17 +23,23 @@ function getFloatParam($key, ?float $defaultVal = null): ?float
 }
 
 $id = "";
-$start = getFloatParam('s', 0);
-$end = getFloatParam('e', 90000);
+$start = 0;
+$end = 90000;
 
 if (isset($_GET["v"])) {
     $id = $_GET["v"];
 }
 
-/*
-if (!isset($_GET["s"])){ $start = "0"; }
-if (!isset($_GET["e"])){ $end = "1000000"; }
-*/
+if ($id !== "") {
+    $res = DB::getRepeatCollection()->findOne(['name' => $id]);
+    if ($res !== null) {
+        $start = $res->start ?? $start;
+        $end = $res->end ?? $end;
+    }
+}
+
+$start = getFloatParam('s', $start); 
+$end = getFloatParam('e', $end);
 
 $video = History::getRepeats([getVideo($id)])[0];
 $file = "files/$video->name-$video->id.mp4";
@@ -54,8 +61,10 @@ $totalTime = History::getTotalTime();
     </video>
     <h1> <?= $video->name ?> </h1>
     <p id="videoloops"> Playtime:  <?= History::toDisplayTime($video->playtime, true) ?> </p>
+    <input id="v" type="hidden" value="<?= $id ?>"/>
     <input id="start" placeholder="start" type="number" value="<?=$start == 0 ? "": $start ?>"/>
     <input id="end" placeholder="end" type="number" value="<?=$end == 90000 ? "": $end ?>"/>
+    <button onclick="sendInterval()">Update loop</button>
 </div>
 
 <div id="history">
@@ -86,8 +95,8 @@ $totalTime = History::getTotalTime();
             body: JSON.stringify({
                 v: '<?= $id ?>',
                 t: t,
-                s: start > 0 ? start : null,
-                e: end === 90000 ? null : end,
+//                s: start > 0 ? start : null,
+//                e: end > myVideo.duration ? null : end,
             })
         }).then(async value => {
             if (!value.ok)
@@ -97,6 +106,23 @@ $totalTime = History::getTotalTime();
                 videoLoops.innerText = "Playtime: " + getTimeStr(playtime);
             }
 
+        });
+    }
+
+    function sendInterval() {
+        fetch("update.php", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                v: '<?= $id ?>',
+                s: start > 0 ? start : null,
+                e: end > myVideo.duration ? null : end,
+            })
+        }).then(async value => {
+            if (!value.ok)
+                console.log(value.status, value.statusText, await value.text());
         });
     }
 
@@ -135,7 +161,6 @@ $totalTime = History::getTotalTime();
             }
             end = e;
         }
-
     });
 
     myVideo.addEventListener('timeupdate', function () {
