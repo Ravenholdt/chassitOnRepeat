@@ -17,7 +17,7 @@
         "php": "^7.4|^8.1",
         "ext-json": "*",
         "ext-mongodb": "*",
-        "mongodb/mongodb": "^1.11",
-        "vlucas/phpdotenv": "^5.4"
+        "mongodb/mongodb": "^1.15.0",
+        "vlucas/phpdotenv": "^v5.5.0"
     }
 }
