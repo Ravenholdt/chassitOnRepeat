@@ -17,10 +17,19 @@ class History
     {
         $videos = [];
         foreach (glob('files/*.mp4') as $filename) {
+
+            // Check for and skip bloody partial/faulty downloads or whatever causing all kinds of trouble...
+            if (preg_match("/^files\/(.*)\.temp\.mp4$/", $filename)) {continue;}
+
             // Matches the name and the if of the file
             // The if is the last 11 characters before ".mp4"
-            preg_match("/^files\/(.*)-([A-Za-z0-9_-]{11}).mp4$/", $filename, $matches);
-            $videos[$matches[2]] = new Video($matches[2], $matches[1]);
+            try {
+                preg_match("/^files\/(.*)-([A-Za-z0-9_-]{11}).mp4$/", $filename, $matches);
+                $videos[$matches[2]] = new Video($matches[2], $matches[1]);
+            } catch (\Throwable $e) {
+                echo 'Caught exception: ',  $e->getMessage(), "\n";
+                echo "<br>" . $filename;
+            }
         }
 
         return $videos;
