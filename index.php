@@ -66,9 +66,9 @@ $totalTime = History::getTotalTime();
     <h1> <?= $video->name ?> </h1>
     <p id="videoloops"> Playtime:  <?= History::toDisplayTime($playtime, true) ?> </p>
     <input id="v" type="hidden" value="<?= $id ?>"/>
-    <input id="start" placeholder="start" type="number" value="<?=$start == 0 ? "": $start ?>" disabled="<?= History::$noCloud ?>"/>
-    <input id="end" placeholder="end" type="number" value="<?=$end == 90000 ? "": $end ?>" disabled="<?= History::$noCloud ?>"/>
-    <button onclick="sendInterval()" disabled="<?= History::$noCloud ?>">Update loop</button>
+    <input id="start" placeholder="start" type="number" value="<?=$start == 0 ? "": $start ?>" <?= History::$noCloud ? 'disabled': '' ?>/>
+    <input id="end" placeholder="end" type="number" value="<?=$end == 90000 ? "": $end ?>" <?= History::$noCloud ? 'disabled': '' ?>/>
+    <button onclick="sendInterval()" <?= History::$noCloud ? 'disabled': '' ?>>Update loop</button>
 </div>
 <div id="history">
     <?php if (History::$noCloud): ?>
