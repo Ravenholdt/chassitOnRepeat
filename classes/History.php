@@ -2,12 +2,16 @@
 
 namespace Chassit\Repeat;
 
+use MongoDB\Driver\Exception\ConnectionTimeoutException;
+
 class History
 {
     /**
      * @var Video[]
      */
     static ?array $allVideos = null;
+
+    static bool $noCloud = false;
 
     /**
      * Returns a list of videos found on the files directory
@@ -95,7 +99,13 @@ class History
     private static function loadVideos()
     {
         $files = self::getFiles();
-        self::$allVideos = self::getRepeats($files);
+        try {
+            self::$allVideos = self::getRepeats($files);
+        } catch (ConnectionTimeoutException $exception) {
+            // If connection has failed just use the normal files without time and interval
+            self::$allVideos = $files;
+            self::$noCloud = true;
+        }
     }
 
     public static function getTotalTime(): int

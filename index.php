@@ -25,24 +25,28 @@ function getFloatParam($key, ?float $defaultVal = null): ?float
 $id = "";
 $start = 0;
 $end = 90000;
+$playtime = 0;
 
 if (isset($_GET["v"])) {
     $id = $_GET["v"];
 }
 
 if ($id !== "") {
-    $res = DB::getRepeatCollection()->findOne(['name' => $id]);
-    if ($res !== null) {
-        $start = $res->start ?? $start;
-        $end = $res->end ?? $end;
-    }
+    try {
+        $res = DB::getRepeatCollection()->findOne(['name' => $id]);
+        if ($res !== null) {
+            $start = $res->start ?? $start;
+            $end = $res->end ?? $end;
+            $playtime = $res->playtime ?? 0;
+        }
+    } catch (Exception $exception) {}
 }
 
 $start = getFloatParam('s', $start); 
 $end = getFloatParam('e', $end);
 
-$video = History::getRepeats([getVideo($id)])[0];
-$file = "files/$video->name-$video->id.mp4";
+$video = getVideo($id);
+$file = sprintf("files/%s-%s.mp4", rawurlencode("$video->name"), $video->id);
 
 $totalTime = History::getTotalTime();
 ?>
@@ -60,14 +64,18 @@ $totalTime = History::getTotalTime();
         Your browser does not support HTML5 video.
     </video>
     <h1> <?= $video->name ?> </h1>
-    <p id="videoloops"> Playtime:  <?= History::toDisplayTime($video->playtime, true) ?> </p>
+    <p id="videoloops"> Playtime:  <?= History::toDisplayTime($playtime, true) ?> </p>
     <input id="v" type="hidden" value="<?= $id ?>"/>
-    <input id="start" placeholder="start" type="number" value="<?=$start == 0 ? "": $start ?>"/>
-    <input id="end" placeholder="end" type="number" value="<?=$end == 90000 ? "": $end ?>"/>
-    <button onclick="sendInterval()">Update loop</button>
+    <input id="start" placeholder="start" type="number" value="<?=$start == 0 ? "": $start ?>" disabled="<?= History::$noCloud ?>"/>
+    <input id="end" placeholder="end" type="number" value="<?=$end == 90000 ? "": $end ?>" disabled="<?= History::$noCloud ?>"/>
+    <button onclick="sendInterval()" disabled="<?= History::$noCloud ?>">Update loop</button>
 </div>
-
 <div id="history">
+    <?php if (History::$noCloud): ?>
+        <div class="error">
+            <h3>No connection to cloud, not showing/saving played time or saving interval</h3>
+        </div>
+    <?php endif; ?>
     <?php
     History::render();
     ?>
@@ -80,7 +88,7 @@ $totalTime = History::getTotalTime();
 
     let start = <?= $start ?>;
     let end = <?= $end ?>;
-    let playtime = <?= $video->playtime ?>;
+    let playtime = <?= $playtime ?>;
     console.log(<?php echo "\"Total playtime: " . $totalTime . "s\""; ?>);
     console.log(<?php echo "\"Total playtime: " . History::toDisplayTime($totalTime, true) . "\""; ?>);
     console.log(start);
