@@ -10,10 +10,24 @@ in this file you write your MongoDB credentials to connect the site to your data
 ### Docker
 
 ```shell
-docker pull ghcr.io/Ravenholdt/chassitOnRepeat/:v1.0.0
+docker pull ghcr.io/ravenholdt/chassitonrepeat:latest
 ```
 
 Example [docker-compose.yml](docker-compose.yml) on how to run this.
+
+### Env variables
+
+
+| Name          | Type   | Required | Default     |
+|---------------|--------|:--------:|-------------|
+| MONGODB_URI   | string |    ✓     |             |
+| PORT          | int    |    x     | 8080        |
+| FILE_PATH     | string |    x     | "/files"    |
+| CONFIG_PATH   | string |    x     | "/config"   |
+| ENABLE_PROXY  | bool   |    x     | false       |
+| TRUSTED_PROXY | string |    x     | "127.0.0.1" |
+| LOG_LEVEL     | string |    x     | "info"      |
+
 
 ## License
 ISC

@@ -2,7 +2,7 @@ version: '3'
 
 services:
   repeat:
-    image: ./build
+    image: ghcr.io/ravenholdt/chassitonrepeat:latest
     ports:
       - "8080:80"
     volumes:
@@ -10,6 +10,5 @@ services:
       - "./config:/config"
     environment:
       MONGODB_URI: 'mongodb+srv://user:pass@url'
-      PORT: '8080'
       ENABLE_PROXY: true
     restart: unless-stopped

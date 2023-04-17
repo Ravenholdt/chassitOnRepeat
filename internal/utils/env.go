@@ -21,6 +21,14 @@ func GetBoolEnv(key string, fallback bool) bool {
 	return parseBool
 }
 
+func GetIntEnv(key string, fallback int) int {
+	parseInt, err := strconv.ParseInt(GetStringEnv(key, "INVALID_INT"), 10, 32)
+	if err != nil {
+		return fallback
+	}
+	return int(parseInt)
+}
+
 func validateEnv(env string) {
 	if GetStringEnv(env, "") == "" {
 		log.Fatal().Str("tag", "env").Msgf("You must set your '%s' environmental variable.", env)

@@ -46,6 +46,6 @@ func (s *Service) Start() error {
 		}
 	}()
 
-	log.Info().Str("tag", "service").Msgf("Listening on port: %s", utils.GetStringEnv("PORT", "8080"))
-	return s.fiber.Listen(fmt.Sprintf(":%s", utils.GetStringEnv("PORT", "8080")))
+	log.Info().Str("tag", "service").Msgf("Listening on port: %d", utils.GetIntEnv("PORT", 8080))
+	return s.fiber.Listen(fmt.Sprintf(":%d", utils.GetIntEnv("PORT", 8080)))
 }
