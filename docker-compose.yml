@@ -1,0 +1,15 @@
+version: '3'
+
+services:
+  repeat:
+    image: ./build
+    ports:
+      - "8080:80"
+    volumes:
+      - "./files:/files"
+      - "./config:/config"
+    environment:
+      MONGODB_URI: 'mongodb+srv://user:pass@url'
+      PORT: '8080'
+      ENABLE_PROXY: true
+    restart: unless-stopped

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <link rel="stylesheet" href="/static/index.css">
+        <title>{{.video.title}} - Chassit on Repeat</title>
+    </head>
+
+    <body>
+        <div class="header-links">
+            <a href="/random">Random</a>
+            <a href="/random?safe">Safe Random</a>
+        </div>
+        {{if .video.url}}
+        <div id="video">
+            <video id="my-video" controls autoplay>
+                <source src="{{.video.url}}" type="video/mp4">
+                Your browser does not support HTML5 video.
+            </video>
+            <h1>{{.video.title}}</h1>
+            <p id="video-loops"> Playtime:  {{.video.time_formatted}}</p>
+            <div class="settings">
+                <h4>Settings:</h4>
+                <input id="start" class="setting" placeholder="start" type="number" value="{{.start_input}}">
+                <input id="end" class="setting" placeholder="end" type="number" value="{{.end_input}}">
+                <div class="setting">
+                    <input type="checkbox" id="safe" name="safe" {{if .video.safe}}checked{{end}}>
+                    <label for="safe">Safe?</label>
+                </div>
+                <hr/>
+                <div>
+                    <button id="update-loop">Update</button>
+                    <span class="success o-0" id="update-success">Updated!</span>
+                </div>
+            </div>
+        </div>
+        {{end}}
+
+        <div id="history">
+            {{range .history}}
+                <a href="/{{.url}}"> {{if gt .time 0}}{{.time_formatted}}{{end}} : {{.name}}</a><br>
+            {{end}}
+        </div>
+
+        {{if .video.url}}
+        <div id="video-data"
+                data-id="{{.video.id}}"
+                data-start="{{.video.start}}"
+                data-end="{{.video.end}}"
+                data-safe="{{.video.safe}}"
+                data-total_play_time="{{.total_time}}"
+                data-formatted_total_play_time="{{.total_time_formatted}}"
+        ></div>
+        <script src="/static/main.js"></script>
+        {{end}}
+    </body>
+</html>
