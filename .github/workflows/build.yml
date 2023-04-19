@@ -25,8 +25,9 @@ jobs:
         run: |
           set -ex
           # Set KO_DOCKER_REPO for future steps.
-          echo "KO_DOCKER_REPO=ghcr.io/${github.repository,,}"
-          echo "KO_DOCKER_REPO=ghcr.io/${github.repository,,}" >> $GITHUB_ENV
+          GITHUB_REPOSITORY="${{ github.repository }}"
+          echo "KO_DOCKER_REPO=ghcr.io/${GITHUB_REPOSITORY,,}"
+          echo "KO_DOCKER_REPO=ghcr.io/${GITHUB_REPOSITORY,,}" >> $GITHUB_ENV
 
       - name: Build and push
         run: ko build --tags latest --tags ${{ github.ref_name }}
