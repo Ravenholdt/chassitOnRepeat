@@ -21,7 +21,12 @@ jobs:
       - name: Setup Ko
         uses: ko-build/setup-ko@v0.6
 
+      - name: Setup repo env
+        run: |
+          set -ex
+          # Set KO_DOCKER_REPO for future steps.
+          echo "KO_DOCKER_REPO=ghcr.io/${github.repository,,}"
+          echo "KO_DOCKER_REPO=ghcr.io/${github.repository,,}" >> $GITHUB_ENV
+
       - name: Build and push
         run: ko build --tags latest --tags ${{ github.ref_name }}
-        env:
-          KO_DOCKER_REPO: ghcr.io/${github.repository,,}
