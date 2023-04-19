@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"errors"
 	"github.com/rs/zerolog/log"
 	"os"
 	"strconv"
@@ -38,4 +39,13 @@ func validateEnv(env string) {
 // ValidateEnvs Required envs
 func ValidateEnvs() {
 	validateEnv("MONGODB_URI")
+
+	filesPath := GetStringEnv("FILES_PATH", "/files")
+	if files, err := os.Stat(filesPath); !errors.Is(err, os.ErrNotExist) {
+		if !files.IsDir() {
+			log.Fatal().Str("tag", "env").Str("path", filesPath).Msgf("FILES_PATH' is no a folder")
+		}
+	} else {
+		log.Fatal().Str("tag", "env").Str("path", filesPath).Err(err).Msgf("Folder defined in 'FILES_PATH' does not exist")
+	}
 }

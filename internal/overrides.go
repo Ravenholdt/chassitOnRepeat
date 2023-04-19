@@ -3,6 +3,7 @@ package internal
 import (
 	"chassit-on-repeat/internal/utils"
 	"encoding/csv"
+	"errors"
 	"fmt"
 	"github.com/fsnotify/fsnotify"
 	"github.com/rs/zerolog/log"
@@ -43,7 +44,7 @@ func (o *Overrides) GetOverride(id string) string {
 }
 
 func (o *Overrides) updateFiles() {
-	fileName := fmt.Sprintf("%s/overrides.csv", utils.GetStringEnv("CONFIG_PATH", "/config"))
+	fileName := fmt.Sprintf("%s/overrides.csv", o.getConfigPath())
 	f, err := os.Open(fileName)
 	if err != nil {
 		return
@@ -71,6 +72,11 @@ func (o *Overrides) updateFiles() {
 func (o *Overrides) Watch() {
 	defer o.watcher.Close()
 
+	if _, err := os.Stat(o.getConfigPath()); errors.Is(err, os.ErrNotExist) {
+		log.Warn().Str("tag", "overrides").Msgf("Folder '%s' does not exits, ignoring overrides", o.getConfigPath())
+		return
+	}
+
 	go func() {
 		for {
 			select {
@@ -88,7 +94,7 @@ func (o *Overrides) Watch() {
 		}
 	}()
 
-	err := o.watcher.Add(utils.GetStringEnv("CONFIG_PATH", "/config"))
+	err := o.watcher.Add(o.getConfigPath())
 	if err != nil {
 		log.Fatal().Str("tag", "overrides").Err(err).Msg("Error adding file path")
 	}
@@ -97,4 +103,8 @@ func (o *Overrides) Watch() {
 
 	// Block until program exists
 	<-o.stopChannel
+}
+
+func (o *Overrides) getConfigPath() string {
+	return utils.GetStringEnv("CONFIG_PATH", "/config")
 }

@@ -78,7 +78,7 @@ func (f *FileHandler) GetVideoFile(id string) (*VideoFile, error) {
 // Updates the internal list of videos to lower
 // the amount of file requests
 func (f *FileHandler) updateFiles() {
-	glob, err := filepath.Glob(fmt.Sprintf("%s/*.mp4", utils.GetStringEnv("FILES_PATH", "/files")))
+	glob, err := filepath.Glob(fmt.Sprintf("%s/*.mp4", f.getFilesPath()))
 	if err != nil {
 		return
 	}
@@ -122,7 +122,7 @@ func (f *FileHandler) Watch() {
 		}
 	}()
 
-	err := f.watcher.Add(utils.GetStringEnv("FILES_PATH", "/files"))
+	err := f.watcher.Add(f.getFilesPath())
 	if err != nil {
 		log.Fatal().Str("tag", "files").Err(err).Msg("Error adding file path")
 	}
@@ -131,4 +131,8 @@ func (f *FileHandler) Watch() {
 
 	// Block until program exists
 	<-f.stopChannel
+}
+
+func (f *FileHandler) getFilesPath() string {
+	return utils.GetStringEnv("FILES_PATH", "/files")
 }

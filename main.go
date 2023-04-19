@@ -25,9 +25,7 @@ func main() {
 	log.Logger = log.Logger.Level(level)
 
 	// Setup required environment variables
-	if err := godotenv.Load(); err != nil {
-		log.Info().Str("tag", "main").Msg("No .env file found")
-	}
+	_ = godotenv.Load()
 	utils.ValidateEnvs()
 
 	// Create file handler and watcher
