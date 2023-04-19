@@ -30,4 +30,4 @@ jobs:
           echo "KO_DOCKER_REPO=ghcr.io/${GITHUB_REPOSITORY,,}" >> $GITHUB_ENV
 
       - name: Build and push
-        run: ko build --tags latest --tags ${{ github.ref_name }}
+        run: ko build --tags latest --tags ${{ github.ref_name }} --bare
