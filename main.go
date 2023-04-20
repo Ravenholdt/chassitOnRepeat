@@ -14,6 +14,8 @@ import (
 )
 
 func main() {
+	_ = godotenv.Load()
+
 	// Setup logger
 	zerolog.TimeFieldFormat = zerolog.TimeFormatUnix
 	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr, TimeFormat: time.RFC3339})
@@ -22,10 +24,10 @@ func main() {
 	if err != nil {
 		log.Fatal().Str("tag", "main").Err(err).Msg("Invalid log level")
 	}
+	log.Info().Str("tag", "main").Str("level", level.String()).Msg("Setting log level")
 	log.Logger = log.Logger.Level(level)
 
 	// Setup required environment variables
-	_ = godotenv.Load()
 	utils.ValidateEnvs()
 
 	// Create file handler and watcher

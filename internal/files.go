@@ -25,7 +25,7 @@ type FileHandler struct {
 	videos      map[string]VideoFile
 }
 
-var videoNameRegex = regexp.MustCompile("^/+files/(.*)-([A-Za-z0-9_-]{11}).mp4$")
+var videoNameRegex = regexp.MustCompile("^.*/+(.*)-([A-Za-z0-9_-]{11}).mp4$")
 
 func NewFileHandler() (*FileHandler, func()) {
 	watcher, err := fsnotify.NewWatcher()
@@ -89,6 +89,7 @@ func (f *FileHandler) updateFiles() {
 	f.videos = map[string]VideoFile{}
 	for _, s := range glob {
 		parts := videoNameRegex.FindAllStringSubmatch(s, -1)
+		log.Trace().Str("tag", "files").Str("file", s).Int("parts", len(parts)).Msg("Checking file")
 		if len(parts[0]) == 3 {
 			name := parts[0][1]
 			id := parts[0][2]
