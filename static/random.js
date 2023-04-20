@@ -37,7 +37,7 @@
 
                 switches++;
                 videoSwitches.innerText = `${switches} videos resisted`;
-                document.title = `(${switches})Chassit radio - ${json.title}`;
+                document.title = `(${switches}) Chassit radio - ${json.title}`;
 
                 myVideo.play();
                 console.log("Switched")
