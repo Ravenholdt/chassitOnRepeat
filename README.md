@@ -3,7 +3,12 @@
 
 This is a website for looping video with optional start/end times and tracking the amount of loops.
 
-## Getting started
+
+## API
+The api doc is available in [API.md](API.md).
+
+
+## Getting started running
 
 ### Run/Build from source
 Copy the `.env.example` file and rename to `.env`,
