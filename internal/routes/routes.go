@@ -28,27 +28,39 @@ func (r *Routes) SetupRoutes(app *fiber.App) {
 
 	// /api/* general endpoints
 	api := app.Group("/api")
+	// Root of api
 	api.Get("/", r.ApiIndex)
 
 	// V1 api
 	v1 := api.Group("/v1")
+	// Root of V1 api
 	v1.Get("/", r.ApiIndex)
+	// Returns playtime and video statistics
 	v1.Get("/stats", r.ApiStats)
 
 	// /api/video/* endpoints
 	video := v1.Group("/video")
+	// Returns an array of all videos
 	video.Get("/", r.ApiGetVideos)
+	// Returns a random video
 	video.Get("/random", r.ApiRandom)
 
+	// /api/video/:id/* endpoints
 	specificVideo := video.Group("/:id")
+	// Returns a specific video specified by the id
 	specificVideo.Get("/", r.ApiGetVideo)
+	// Updates the repeated time of the specified video.
 	specificVideo.Post("/", r.ApiPostVideoTime)
+	// Updates the start/end and safe status of the specified video.
 	specificVideo.Post("/settings", r.ApiPostVideoSettings)
 
-	// Index route with no
-	app.Get("/random", r.ViewRandom)
+	// Routes serving html content
 
+	// Serves the random video page
+	app.Get("/random", r.ViewRandom)
+	// Serves a list of all videos available to repeat
 	app.Get("/", r.ViewVideo)
+	// Serves the specified video and a list of available videos
 	app.Get("/:id", r.ViewVideo)
 }
 
