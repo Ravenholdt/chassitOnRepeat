@@ -10,14 +10,17 @@
     console.log(start);
     console.log(end);
 
-    const myVideo = document.getElementById("my-video");
-    myVideo.volume = 0.5;
+    const videoElement = document.getElementById("my-video");
+    videoElement.volume = 0.5;
+
+    let updateInterval = setInterval(updateTimer, 40);
 
     const videoTitle = document.getElementById("video-title");
     const videoLoops = document.getElementById("video-loops");
     const videoSwitches = document.getElementById("switches");
 
     function endHandler(){
+        clearInterval(updateInterval)
         fetch("/api/v1/video/random" + (safe ? '?safe': ''))
             .then(async resp => {
                 const json = await resp.json();
@@ -27,10 +30,10 @@
                 end = json.end;
                 id = json.id;
 
-                myVideo.src = json.url;
-                myVideo.currentTime = start;
+                videoElement.src = json.url;
+                videoElement.currentTime = start;
 
-                console.log(`${start}, ${end}, ${id}, ${myVideo.currentTime} & ${myVideo.src}`);
+                console.log(start, end, id, videoElement.currentTime, videoElement.src);
 
                 videoTitle.innerText = json.title;
                 videoLoops.innerText = `Playtime: ${json.time_formatted}`;
@@ -39,7 +42,8 @@
                 videoSwitches.innerText = `${switches} videos resisted`;
                 document.title = `(${switches}) Chassit radio - ${json.title}`;
 
-                myVideo.play();
+                videoElement.play();
+                updateInterval = setInterval(updateTimer, 40);
                 console.log("Switched")
             })
             .catch(err => console.error(err))
@@ -47,18 +51,19 @@
         console.log("Ended");
     }
 
-    myVideo.addEventListener('timeupdate', function () {
-
-        if (this.currentTime < start) {
-            this.currentTime = start;
+    function updateTimer() {
+        if (videoElement.currentTime < start) {
+            videoElement.currentTime = start;
             console.log("Jump Forward");
         }
 
-        if (this.currentTime > end) {
+        if (videoElement.currentTime >= end) {
             console.log("Restart");
             endHandler();
         }
-    }, false);
 
-    myVideo.addEventListener('ended', endHandler, false);
+        if (videoElement.currentTime >= videoElement.duration) {
+            endHandler();
+        }
+    }
 })();

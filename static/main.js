@@ -8,8 +8,7 @@
     let formattedTotalPlaytime =  data.dataset.formatted_total_play_time;
     data.remove();
 
-    if (typeof id === 'undefined')
-    {
+    if (typeof id === 'undefined') {
         console.log("No id set, ignoring")
         return;
     }
@@ -19,12 +18,21 @@
     console.log("Start: " + start);
     console.log("End: " + end);
 
-    const myVideo = document.getElementById("my-video");
-    myVideo.volume = 0.5;
+    const videoElement = document.getElementById("my-video");
+    videoElement.volume = 0.5;
 
     const videoLoops = document.getElementById("video-loops");
     const currentLoops = document.getElementById("current-loops");
     let currentTime = 0;
+
+    let updateTimeInterval;
+    function stopTimer() {
+        clearInterval(updateTimeInterval);
+    }
+
+    function startTimer() {
+        updateTimeInterval = setInterval(updateTime, 40);
+    }
 
     /**
      * Format a number to the given amount of digits
@@ -71,8 +79,10 @@
      * Updates the current time played for the video
      * @param {number} t The played time to add to the video
      */
-    function update(t) {
-        fetch(`/api/v1/video/${id}`, {
+    async function update(t) {
+        stopTimer();
+
+        const value = await fetch(`/api/v1/video/${id}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -80,44 +90,43 @@
             body: JSON.stringify({
                 time: t,
             })
-        }).then(async value => {
-            if (!value.ok)
-                console.log(value.status, value.statusText, await value.text());
-            else {
-                let json = await value.json();
-                videoLoops.innerText = "Total playtime: " + json.time_formatted;
-                updateCurrentPlaytime(t);
-            }
         });
+
+        if (value.ok) {
+            let json = await value.json();
+            videoLoops.innerText = "Total playtime: " + json.time_formatted;
+            updateCurrentPlaytime(t);
+        } else
+            console.log(value.status, value.statusText, await value.text());
+
+        startTimer();
     }
 
-    function sendInterval() {
-        fetch(`/api/v1/video/${id}/settings`, {
+    async function sendInterval() {
+        const value = await fetch(`/api/v1/video/${id}/settings`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
                 start: start > 0 ? start : null,
-                end: end > myVideo.duration ? null : end,
+                end: end > videoElement.duration ? null : end,
                 safe: safe
             })
-        }).then(async value => {
-            if (value.ok) {
-                const success = document.getElementById("update-success");
-
-                success.classList.remove("o-0")
-                setTimeout(() => {
-                    success.classList.add("o-0");
-                }, 2000);
-            } else {
-                console.log(value.status, value.statusText, await value.text());
-            }
         });
+        if (value.ok) {
+            const success = document.getElementById("update-success");
+
+            success.classList.remove("o-0")
+            setTimeout(() => {
+                success.classList.add("o-0");
+            }, 2000);
+        } else
+            console.log(value.status, value.statusText, await value.text());
     }
 
-    document.getElementById("update-loop").addEventListener("click", (event) => {
-        sendInterval();
+    document.getElementById("update-loop").addEventListener("click", async (event) => {
+        await sendInterval();
     });
 
 
@@ -152,29 +161,43 @@
         }
     });
 
+    videoElement.addEventListener("play", function () {
+        // Use an internal timer instead of video as this is more accurate and fires more often
+        startTimer();
+    })
 
-    myVideo.addEventListener('timeupdate', function () {
-        if (this.currentTime < start) {
-            this.currentTime = start;
+    videoElement.addEventListener("pause", async function () {
+        stopTimer();
+    })
+
+    async function updateTime() {
+        if (videoElement.currentTime < start) {
+            videoElement.currentTime = start;
             console.log("Jump Forward");
+            return;
         }
 
-        if (this.currentTime > end) {
-            this.currentTime = start;
+        if (videoElement.currentTime >= (videoElement.duration - 0.05)) {
+            // User browser loop when the start isn't set
+            if (start > 0)
+                videoElement.currentTime = start;
+
+            console.log("Ended")
+            await update(videoElement.duration - start);
+            return;
+        }
+
+        if (videoElement.currentTime >= end) {
+            videoElement.currentTime = start;
+            videoElement.play()
+
             console.log("Restart");
-            myVideo.play();
-            update(end - start);
+            await update(end - start);
         }
-    }, false);
+    }
 
-
-    myVideo.addEventListener('ended', function () {
-        this.currentTime = start;
-        myVideo.play();
-        console.log("Ended");
-        update(this.duration - start);
-    }, false);
-
-
-    myVideo.play();
+    // Try to autostart the video
+    videoElement.play().catch(reason => {
+        console.log("Error starting video automatically", reason);
+    });
 })();

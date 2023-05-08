@@ -90,7 +90,7 @@ func (f *FileHandler) updateFiles() {
 	for _, s := range glob {
 		parts := videoNameRegex.FindAllStringSubmatch(s, -1)
 		log.Trace().Str("tag", "files").Str("file", s).Int("parts", len(parts)).Msg("Checking file")
-		if len(parts[0]) == 3 {
+		if len(parts) > 0 && len(parts[0]) == 3 {
 			name := parts[0][1]
 			id := parts[0][2]
 			log.Debug().Str("tag", "files").Str("file", s).Str("name", name).Str("id", id).Msg("Found valid file")

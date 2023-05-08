@@ -8,7 +8,9 @@ import (
 	_ "embed"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/filesystem"
+	"github.com/gofiber/fiber/v2/middleware/limiter"
 	"net/http"
+	"time"
 )
 
 func (r *Routes) SetupRoutes(app *fiber.App) {
@@ -24,6 +26,15 @@ func (r *Routes) SetupRoutes(app *fiber.App) {
 	// Provide files from provided path on the server
 	app.Static("/files", utils.GetStringEnv("FILES_PATH", "/files"), fiber.Static{
 		Compress: true,
+	})
+
+	limit := limiter.New(limiter.Config{
+		Max:                1,
+		Expiration:         1 * time.Second,
+		SkipFailedRequests: true,
+		KeyGenerator: func(ctx *fiber.Ctx) string {
+			return ctx.IP() + ctx.Path()
+		},
 	})
 
 	// /api/* general endpoints
@@ -50,7 +61,7 @@ func (r *Routes) SetupRoutes(app *fiber.App) {
 	// Returns a specific video specified by the id
 	specificVideo.Get("/", r.ApiGetVideo)
 	// Updates the repeated time of the specified video.
-	specificVideo.Post("/", r.ApiPostVideoTime)
+	specificVideo.Post("/", limit, r.ApiPostVideoTime)
 	// Updates the start/end and safe status of the specified video.
 	specificVideo.Post("/settings", r.ApiPostVideoSettings)
 
