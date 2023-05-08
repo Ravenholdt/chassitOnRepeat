@@ -19,7 +19,7 @@ import (
 
 func createWebApp() *fiber.App {
 	// Initialize standard Go html template engine
-	engine := html.NewFileSystem(http.FS(views.Views), ".tmpl")
+	engine := html.NewFileSystem(http.FS(views.Views), ".gohtml")
 
 	proxy := utils.GetBoolEnv("ENABLE_PROXY", false)
 	proxyHeader := ""
