@@ -1,0 +1,13 @@
+version: '3'
+
+services:
+  repeat:
+    image: ghcr.io/ravenholdt/chassitonrepeat:latest
+    ports:
+      - "8080"
+    volumes:
+      - "./files:/files"
+      - "./config:/config"
+    environment:
+      MONGODB_URI: 'mongodb+srv://user:pass@url'
+    restart: unless-stopped

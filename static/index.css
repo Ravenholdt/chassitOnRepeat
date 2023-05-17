@@ -1,0 +1,87 @@
+.container {
+    display: flex;
+}
+
+#video {
+    /*flex: 1;*/
+    position: relative;
+    width: 50%;
+    float: left;
+    height: 100%;
+    /*background-color: #282828;
+    z-index: 1010101010*/
+}
+
+#my-video {
+    /*flex: 1;*/
+    position: relative;
+    width: 98%;
+    /*float: left;
+    height: 100%;*/
+    /*background-color: #282828;
+    z-index: 1010101010*/
+}
+
+#history {
+    /*flex: 1;*/
+    position: relative;
+    width: 50%;
+    float: right;
+    height: 100%;
+    /*background-color: #0080ff;
+    z-index: 1010101010*/
+}
+
+.header-links {
+    text-align: center;
+    padding-bottom: 10px;
+}
+
+.header-links a:not(:last-child) {
+    padding-right: 5px;
+    border-right: 1px solid #aaa;
+}
+
+.success {
+    display: inline;
+    color: #27ae60;
+    opacity: 1;
+    padding-left: 5px;
+    transition: opacity 200ms;
+}
+
+.o-0 {
+    opacity: 0;
+    cursor: auto;
+    user-select: none;
+}
+
+.settings {
+    display: block;
+    width: fit-content;
+    padding: 5px;
+    border: 1px solid #aaa;
+    border-radius: 3px;
+    box-shadow: 1px 1px #eee;
+}
+
+.setting {
+    display: block;
+    margin: 5px 5px 5px 0;
+}
+
+.settings button {
+    padding: 5px;
+    cursor: pointer;
+}
+
+.settings h4 {
+    margin: 0;
+}
+
+.settings hr {
+    border: 0;
+    height: 1px;
+    color: #aaa;
+    background-color: #aaa;
+}

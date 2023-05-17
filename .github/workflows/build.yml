@@ -1,0 +1,33 @@
+name: Create and publish Docker image
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build_docker:
+    runs-on: ubuntu-latest
+    name: Build docker image
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Go
+        uses: actions/setup-go@v4
+        with:
+          go-version-file: 'go.mod'
+
+      - name: Setup Ko
+        uses: ko-build/setup-ko@v0.6
+
+      - name: Setup repo env
+        run: |
+          set -ex
+          # Set KO_DOCKER_REPO for future steps.
+          GITHUB_REPOSITORY="${{ github.repository }}"
+          echo "KO_DOCKER_REPO=ghcr.io/${GITHUB_REPOSITORY,,}"
+          echo "KO_DOCKER_REPO=ghcr.io/${GITHUB_REPOSITORY,,}" >> $GITHUB_ENV
+
+      - name: Build and push
+        run: ko build --tags latest --tags ${{ github.ref_name }} --bare

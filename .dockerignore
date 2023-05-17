@@ -1,0 +1,9 @@
+files/
+config/
+.github/
+.gitignore
+.gitattributes
+.ko.yaml
+README.md
+LICENSE
+.env*
