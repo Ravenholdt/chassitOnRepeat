@@ -87,6 +87,16 @@ func (r *Routes) ApiPostVideoTime(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusBadRequest, "Bad body")
 	}
 
+	if req.Time < 0 {
+		log.Error().Str("tag", "routes_api").Str("id", id).Err(err).Msg("Input time was negative")
+		return fiber.NewError(fiber.StatusBadRequest, "Bad body")
+	}
+
+	if req.Time > 90_000 {
+		log.Error().Str("tag", "routes_api").Str("id", id).Err(err).Msg("Input time was too large")
+		return fiber.NewError(fiber.StatusBadRequest, "Bad body")
+	}
+
 	v, err := r.DB.UpdateVideoPlaytime(id, int64(req.Time))
 	if err != nil {
 		log.Error().Str("tag", "routes_api").Str("id", id).Err(err).Msg("Error updating video time")
