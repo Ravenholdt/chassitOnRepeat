@@ -25,7 +25,9 @@ func (r *Routes) SetupRoutes(app *fiber.App) {
 
 	// Provide files from provided path on the server
 	app.Static("/files", utils.GetStringEnv("FILES_PATH", "/files"), fiber.Static{
-		Compress: true,
+		Compress:  true,
+		ByteRange: true,
+		MaxAge:    86400, // 1 day
 	})
 
 	limit := limiter.New(limiter.Config{
