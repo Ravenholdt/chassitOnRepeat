@@ -9,6 +9,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/filesystem"
 	"github.com/gofiber/fiber/v2/middleware/limiter"
+	"io/fs"
 	"net/http"
 	"time"
 )
@@ -16,10 +17,10 @@ import (
 func (r *Routes) SetupRoutes(app *fiber.App) {
 	// Provide static files from embedded filesystem
 	app.Use("/static", filesystem.New(filesystem.Config{
-		Root: http.FS(static.Files),
+		Root: http.FS(static.GetFiles()),
 	}))
 	app.Get("/favicon.ico", func(ctx *fiber.Ctx) error {
-		icon, _ := static.Files.ReadFile("favicon.ico")
+		icon, _ := static.GetFiles().(fs.ReadFileFS).ReadFile("favicon.ico")
 		return ctx.Status(200).Send(icon)
 	})
 
@@ -74,7 +75,7 @@ func (r *Routes) SetupRoutes(app *fiber.App) {
 	// Serves a list of all videos available to repeat
 	app.Get("/", r.ViewVideo)
 	// Serves the specified video and a list of available videos
-	app.Get("/:id", r.ViewVideo)
+	app.Get("/:id", r.ViewVideo).Name("video")
 }
 
 func (r *Routes) GetResponse(v model.Video) *model.ResponseVideo {

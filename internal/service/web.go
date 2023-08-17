@@ -55,7 +55,8 @@ func createWebApp() *fiber.App {
 			}
 
 			if code == fiber.StatusNotFound {
-				return ctx.Status(code).Render("views/404", fiber.Map{})
+				// Redirect to "Something Went Terribly Wrong" video
+				return ctx.RedirectToRoute("video", fiber.Map{"id": "t3otBJVZzT0"})
 			}
 
 			ctx.Set(fiber.HeaderContentType, fiber.MIMETextPlainCharsetUTF8)
