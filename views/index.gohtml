@@ -36,11 +36,15 @@
         </div>
         {{end}}
 
-        <div id="history">
-            {{range .history}}
-                <a href="/{{.url}}"> {{if gt .time 0}}{{.time_formatted}}{{end}} : {{.name}}</a><br>
+        <table id="history">
+            {{range $i, $e := .history}}
+                <tr onclick="window.location='/{{.url}}';" class="history-item">
+                    <td class="history-position">{{$i}}</td>
+                    <td class="history-name">{{.name}}</td>
+                    <td class="history-time">{{if gt .time 0}}{{.time_formatted}}{{end}}</td>
+                </tr>
             {{end}}
-        </div>
+        </table>
 
         {{if .video.url}}
         <div id="video-data"
