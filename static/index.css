@@ -44,6 +44,10 @@
     padding: 4px;
 }
 
+.history-time {
+    white-space: nowrap;
+}
+
 .header-links {
     text-align: center;
     padding-bottom: 10px;
