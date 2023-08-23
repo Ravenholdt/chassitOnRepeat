@@ -1,61 +1,153 @@
-* {
-    font-family: "Roboto", Helvetica, Arial, sans-serif;
+/* START NORMALIZE */
+
+*,
+::before,
+::after {
+    box-sizing: border-box;
 }
 
+html {
+    font-family: 'Segoe UI', Roboto, Helvetica, Ariel, sans-serif;
+    line-height: 1.15;
+    -webkit-text-size-adjust: 100%; /* 2. Prevent adjustments of font size after orientation changes in iOS. */
+    -moz-tab-size: 4; /* 3. Use a more readable tab size (opinionated). */
+    tab-size: 4; /* 3 */
+}
+
+body {
+    margin: 5px;
+    background-color: #fefefe;
+}
+
+/**
+Remove the inner border and padding in Firefox.
+*/
+
+::-moz-focus-inner {
+    border-style: none;
+    padding: 0;
+}
+
+/**
+Restore the focus styles unset by the previous rule.
+*/
+
+:-moz-focusring {
+    outline: 1px dotted ButtonText;
+}
+
+/**
+Remove the additional ':invalid' styles in Firefox.
+See: https://github.com/mozilla/gecko-dev/blob/2f9eacd9d3d995c937b4251a5557d95d494c9be1/layout/style/res/forms.css#L728-L737
+*/
+
+:-moz-ui-invalid {
+    box-shadow: none;
+}
+
+
+/* END NORMALIZE */
+
 .container {
-    display: flex;
+    display: grid;
+    grid-gap: 10px;
+    grid-template: 30px auto auto / 1fr;
+    grid-template-areas:
+    "header"
+    "left"
+    "right"
+}
+
+@media (min-width: 960px) {
+    .container {
+        grid-template: 30px 1fr / 1fr 1fr;
+        grid-template-areas:
+        "header header"
+        "left right";
+    }
+}
+
+
+#header {
+    grid-area: header;
+    display: grid;
+    grid-template: 1fr / 1fr 1fr;
+}
+
+#header div {
+    padding: 5px;
+    font-size: 14pt;
+}
+
+#header a {
+    padding: 5px;
+    color: #000;
+    text-decoration-style: dashed;
+}
+
+#header a:hover {
+    color: #2980b9;
+    text-decoration-style: solid;
+}
+
+#random {
+    text-align: right;
+}
+
+#random-safe {
+    text-align: left;
 }
 
 #video {
-    position: relative;
-    width: 50%;
-    float: left;
-    height: 100%;
+    grid-area: left;
+    padding-bottom: 10px;
+    border-bottom: #e0e0e0 1px solid;
+}
+
+@media (min-width: 960px) {
+    #video {
+        border-bottom: 0;
+    }
 }
 
 #my-video {
-    position: relative;
-    width: 98%;
+    width: 100%;
 }
 
 #history {
-    position: relative;
-    width: 50%;
-    float: right;
+    grid-area: right;
+    display: table;
     height: 100%;
-
-    border-collapse: collapse;
-    table-layout: auto;
 }
 
-.history-item {
+.row {
+    display: table-row;
     cursor: pointer;
     background-color: #fff;
+    text-decoration: none;
+    color: #000;
 }
 
-.history-item:hover {
+
+.row:hover {
     background-color: #f0f0f0;
 }
 
-.history-item td {
+.row:hover .name {
+    background-color: #f0f0f0;
+    text-decoration: underline;
+}
+
+.row-item {
+    display: table-cell;
+    padding: 5px;
     border: 1px solid #f8f8f8;
     border-right: 0;
     border-left: 0;
-    padding: 4px;
 }
 
-.history-time {
+.time {
     white-space: nowrap;
-}
-
-.header-links {
-    text-align: center;
-    padding-bottom: 10px;
-}
-
-.header-links a:not(:last-child) {
-    padding-right: 5px;
-    border-right: 1px solid #aaa;
 }
 
 .success {
@@ -75,9 +167,9 @@
 .settings {
     display: block;
     width: fit-content;
-    padding: 5px;
+    padding: 10px;
     border: 1px solid #aaa;
-    border-radius: 3px;
+    border-radius: 2px;
     box-shadow: 1px 1px #eee;
 }
 
@@ -86,9 +178,19 @@
     margin: 5px 5px 5px 0;
 }
 
-.settings button {
-    padding: 5px;
+button {
+    border-radius: 2px;
+    font-weight: bold;
+    border: 1px #2980b9 solid;
+    background-color: #fff;
+    color: #2980b9;
+    padding: 8px;
     cursor: pointer;
+}
+
+button:hover {
+    background-color: #3498db;
+    color: #fff;
 }
 
 .settings h4 {
