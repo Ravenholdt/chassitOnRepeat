@@ -60,7 +60,7 @@ func (r *Routes) ViewVideo(c *fiber.Ctx) error {
 		a := history[i]
 		b := history[j]
 		if a["time"].(int64) == 0 && b["time"].(int64) == 0 {
-			return a["name"].(string) > b["name"].(string)
+			return a["name"].(string) < b["name"].(string)
 		}
 		return a["time"].(int64) > b["time"].(int64)
 	})
