@@ -72,10 +72,16 @@ func (r *Routes) SetupRoutes(app *fiber.App) {
 
 	// Serves the random video page
 	app.Get("/random", r.ViewRandom)
-	// Serves a list of all videos available to repeat
-	app.Get("/", r.ViewVideo)
-	// Serves the specified video and a list of available videos
-	app.Get("/:id", r.ViewVideo).Name("video")
+
+	// Serves a list of all videos available to repeat in top played order
+	app.Get("/top", r.ViewTopVideos).Name("video-top-list")
+	// Serves the specified video and a list of available videos in top played order
+	app.Get("/top/:id", r.ViewTopVideos).Name("video-top")
+
+	// Serves a list of all videos available to repeat in last played order
+	app.Get("/", r.ViewLastVideos).Name("video-list")
+	// Serves the specified video and a list of available videos in
+	app.Get("/:id", r.ViewLastVideos).Name("video")
 }
 
 func (r *Routes) GetResponse(v model.Video) *model.ResponseVideo {
