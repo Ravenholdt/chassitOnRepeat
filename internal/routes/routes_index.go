@@ -5,10 +5,11 @@ import (
 	"chassit-on-repeat/internal/utils"
 	"errors"
 	"fmt"
-	"github.com/gofiber/fiber/v2"
-	"github.com/rs/zerolog/log"
 	"sort"
 	"strconv"
+
+	"github.com/gofiber/fiber/v2"
+	"github.com/rs/zerolog/log"
 )
 
 func (r *Routes) MergeFileVideos(videos *model.ResponseVideoMap) {
@@ -75,7 +76,7 @@ func (r *Routes) ViewLastVideos(c *fiber.Ctx) error {
 
 // ViewTopVideos Renders a list of top videos and handle video view
 func (r *Routes) ViewTopVideos(c *fiber.Ctx) error {
-	history, videos, totalTime, err := r.getHistory("top/")
+	history, videos, totalTime, err := r.getHistory("")
 	if err != nil {
 		return err
 	}
