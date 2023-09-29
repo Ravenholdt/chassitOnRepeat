@@ -22,10 +22,10 @@ func FormatReadableTime(time int64, showDays bool) string {
 		return fmt.Sprintf("%dd %02dh %02dm %02ds", days, hours, minutes, seconds)
 	}
 	if hours > 0 {
-		return fmt.Sprintf("%2dh %02dm %02ds", hours, minutes, seconds)
+		return fmt.Sprintf("%dh %02dm %02ds", hours, minutes, seconds)
 	}
 	if minutes > 0 {
-		return fmt.Sprintf("%2dm %02ds", minutes, seconds)
+		return fmt.Sprintf("%dm %02ds", minutes, seconds)
 	}
 
 	return fmt.Sprintf("%ds", seconds)

@@ -3,7 +3,7 @@
     let id = data.dataset.id;
     let start = parseFloat(data.dataset.start);
     let end = parseFloat(data.dataset.end);
-    let safe = data.dataset.safe === 'safe';
+    let safe = data.dataset.safe === 'true';
     let totalPlaytime = parseInt(data.dataset.total_play_time, 10);
     let formattedTotalPlaytime =  data.dataset.formatted_total_play_time;
     data.remove();
@@ -17,6 +17,7 @@
     console.log("Total playtime: " + formattedTotalPlaytime);
     console.log("Start: " + start);
     console.log("End: " + end);
+    console.log("Safe: " + safe)
 
     const videoElement = document.getElementById("my-video");
     videoElement.volume = 0.5;

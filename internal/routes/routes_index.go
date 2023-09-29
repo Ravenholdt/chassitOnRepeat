@@ -61,6 +61,17 @@ func sortTime(history []fiber.Map) func(i int, j int) bool {
 	}
 }
 
+// ViewFeelingLucky Redirects to a random video
+func (r *Routes) ViewFeelingLucky(c *fiber.Ctx) error {
+	video, err := r.DB.GetRandomVideo(r.Files.GetVideoIds(), false)
+	if err != nil {
+		log.Error().Str("tag", "routes_views").Err(err).Msg("Error getting random video")
+		return fiber.NewError(fiber.StatusNotFound, "Error getting random video")
+	}
+
+	return c.RedirectToRoute("video", fiber.Map{"id": video.ID}, 302)
+}
+
 // ViewLastVideos Renders a list of last videos and handle video view
 func (r *Routes) ViewLastVideos(c *fiber.Ctx) error {
 	history, videos, totalTime, err := r.getHistory("")
@@ -151,6 +162,7 @@ func (r *Routes) getHistory(urlPrefix string) ([]fiber.Map, *model.ResponseVideo
 			"url":            fmt.Sprintf("%s%s", urlPrefix, v.Video.ID),
 			"name":           name,
 			"time":           t,
+			"safe":           utils.Val(v.Video.Safe, true),
 			"last_played":    v.Video.LastPlayed,
 			"time_formatted": utils.FormatReadableTime(t, false),
 		}
