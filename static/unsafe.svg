@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- License: MIT. Made by hicon: https://hicon.me/ -->
+<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M4 5.54054L11.5 3L19 5.54054V12.0569C19 14.4506 17.9281 16.7185 16.0786 18.2381L11.5 22L6.92137 18.2381C5.07187 16.7185 4 14.4506 4 12.0569V5.54054Z" stroke="#c0392b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M9 15L14 10M9 10L14 15" stroke="#c0392b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

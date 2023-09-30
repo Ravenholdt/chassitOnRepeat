@@ -73,6 +73,9 @@ func (r *Routes) SetupRoutes(app *fiber.App) {
 	// Serves the random video page
 	app.Get("/random", r.ViewRandom)
 
+	// Redirects to a random video
+	app.Get("/im-feeling-lucky", r.ViewFeelingLucky)
+
 	// Serves a list of all videos available to repeat in top played order
 	app.Get("/top", r.ViewTopVideos).Name("video-top-list")
 	// Serves the specified video and a list of available videos in top played order

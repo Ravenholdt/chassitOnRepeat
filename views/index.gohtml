@@ -8,11 +8,12 @@
     <body>
         <div class="container">
             <div id="header">
-                <div id="random">
+                <div id="links">
                     <a href="/random">Random</a>
-                </div>
-                <div id="random-safe">
+                    <a href="/im-feeling-lucky">I'm Feeling Lucky</a>
                     <a href="/random?safe">Safe Random</a>
+                </div>
+                <div id="top-list">
                     <a href="{{.time_link}}">{{.total_time_formatted}}</a>
                 </div>
             </div>
@@ -47,7 +48,7 @@
                     <a class="row" href="/{{.url}}">
                         <div class="row-item">{{$i}}</div>
                         <div class="row-item name">{{.name}}</div>
-                        <div class="row-item time">{{if gt .time 0}}{{.time_formatted}}{{end}}</div>
+                        <div class="row-item time">{{if gt .time 0}}{{if .safe}}{{template "safe"}}{{else}}{{template "unsafe"}}{{end}}{{.time_formatted}}{{end}}</div>
                     </a>
                 {{end}}
             </div>
