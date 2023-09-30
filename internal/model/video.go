@@ -35,22 +35,23 @@ func (v *Video) SetSafe(safe bool) {
 }
 
 func NewVideo(id string) *Video {
-	return &Video{
+	v := &Video{
 		ID: id,
 	}
+	v.SetSafe(true)
+	return v
 }
 
 func NewVideoWithTime(id string, t int64) *Video {
-	return &Video{
-		ID:   id,
-		Time: &t,
-	}
+	v := NewVideo(id)
+	v.AddTime(t)
+	v.UpdateLastPlayed()
+	return v
 }
 
 func NewVideoWithLoop(id string, start *float64, end *float64) *Video {
-	return &Video{
-		ID:    id,
-		Start: start,
-		End:   end,
-	}
+	v := NewVideo(id)
+	v.Start = start
+	v.End = end
+	return v
 }
