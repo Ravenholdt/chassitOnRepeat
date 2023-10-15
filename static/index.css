@@ -51,7 +51,7 @@ See: https://github.com/mozilla/gecko-dev/blob/2f9eacd9d3d995c937b4251a5557d95d4
 .container {
     display: grid;
     grid-gap: 10px;
-    grid-template: 30px auto auto / 1fr;
+    grid-template: auto auto auto / 1fr;
     grid-template-areas:
     "header"
     "left"
@@ -114,6 +114,10 @@ See: https://github.com/mozilla/gecko-dev/blob/2f9eacd9d3d995c937b4251a5557d95d4
     border-bottom: #e0e0e0 1px solid;
 }
 
+#video h1 {
+    word-break: break-word;
+}
+
 @media (min-width: 960px) {
     #video {
         border-bottom: 0;
@@ -138,6 +142,9 @@ See: https://github.com/mozilla/gecko-dev/blob/2f9eacd9d3d995c937b4251a5557d95d4
     color: #000;
 }
 
+.row .name {
+    word-break: break-word;
+}
 
 .row:hover {
     background-color: #f0f0f0;
