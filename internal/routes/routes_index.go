@@ -191,8 +191,21 @@ func (r *Routes) ViewRandom(c *fiber.Ctx) error {
 		}
 	}
 
+	randomId := "RANDOM"
+	if safe {
+		randomId = "RANDOM-SAFE"
+	}
+
+	totalTime := utils.FormatReadableTime(0, true)
+	vid, err := r.DB.GetVideoFromId(randomId)
+	if err == nil {
+		t := utils.Val(vid.Time, 0)
+		totalTime = utils.FormatReadableTime(t, true)
+	}
+
 	return c.Status(fiber.StatusOK).Render("random", fiber.Map{
-		"video": r.GetResponse(*video).ToMap(),
-		"safe":  safe,
+		"video":                r.GetResponse(*video).ToMap(),
+		"total_time_formatted": totalTime,
+		"safe":                 safe,
 	})
 }
