@@ -13,6 +13,8 @@ import (
 	"time"
 )
 
+var goVersion = "devel"
+
 func main() {
 	_ = godotenv.Load()
 
@@ -24,7 +26,8 @@ func main() {
 	if err != nil {
 		log.Fatal().Str("tag", "main").Err(err).Msg("Invalid log level")
 	}
-	log.Info().Str("tag", "main").Str("level", level.String()).Msg("Setting log level")
+	log.Info().Str("tag", "main").Str("level", level.String()).
+		Str("go_version", goVersion).Msg("Setting log level")
 	log.Logger = log.Logger.Level(level)
 
 	// Setup required environment variables

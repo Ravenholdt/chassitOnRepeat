@@ -1,3 +1,8 @@
 defaultPlatforms:
   - linux/arm64
   - linux/amd64
+
+builds:
+  - ldflags:
+    - -s -w
+    - -X "main.goVersion={{.Env.GOVERSION}}"

@@ -11,7 +11,7 @@ jobs:
     name: Build docker image
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup Go
         uses: actions/setup-go@v4
@@ -28,6 +28,7 @@ jobs:
           GITHUB_REPOSITORY="${{ github.repository }}"
           echo "KO_DOCKER_REPO=ghcr.io/${GITHUB_REPOSITORY,,}"
           echo "KO_DOCKER_REPO=ghcr.io/${GITHUB_REPOSITORY,,}" >> $GITHUB_ENV
+          echo "GOVERSION=$(go env GOVERSION)" >> $GITHUB_ENV
 
       - name: Build and push
         run: ko build --tags latest --bare
