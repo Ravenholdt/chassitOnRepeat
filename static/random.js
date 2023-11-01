@@ -17,41 +17,63 @@
 
     const videoTitle = document.getElementById("video-title");
     const videoLoops = document.getElementById("video-loops");
+    const totalLoops = document.getElementById("total-loops");
     const videoSwitches = document.getElementById("switches");
 
-    function endHandler(){
-        clearInterval(updateInterval)
-        fetch("/api/v1/video/random" + (safe ? '?safe': ''))
-            .then(async resp => {
-                const json = await resp.json();
-                console.log(json);
+    async function update(t) {
 
-                start = json.start;
-                end = json.end;
-                id = json.id;
-
-                videoElement.src = json.url;
-                videoElement.currentTime = start;
-
-                console.log(start, end, id, videoElement.currentTime, videoElement.src);
-
-                videoTitle.innerText = json.title;
-                videoLoops.innerText = `Playtime: ${json.time_formatted}`;
-
-                switches++;
-                videoSwitches.innerText = `${switches} videos resisted`;
-                document.title = `(${switches}) Chassit radio - ${json.title}`;
-
-                videoElement.play();
-                updateInterval = setInterval(updateTimer, 40);
-                console.log("Switched")
+        const id = safe ? 'RANDOM-SAFE': 'RANDOM';
+        const value = await fetch(`/api/v1/video/${id}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                time: t,
             })
-            .catch(err => console.error(err))
+        });
 
+        if (value.ok) {
+            let json = await value.json();
+            totalLoops.innerText = "Total Random Playtime: " + json.time_formatted;
+        } else
+            console.log(value.status, value.statusText, await value.text());
+    }
+
+    async function updateVideo() {
+        const resp = await fetch("/api/v1/video/random" + (safe ? '?safe': ''))
+        const json = await resp.json();
+        console.log(json);
+
+        start = json.start;
+        end = json.end;
+        id = json.id;
+
+        videoElement.src = json.url;
+        videoElement.currentTime = start;
+
+        console.log(start, end, id, videoElement.currentTime, videoElement.src);
+
+        videoTitle.innerText = json.title;
+        videoLoops.innerText = `Playtime: ${json.time_formatted}`;
+
+        switches++;
+        videoSwitches.innerText = `${switches} videos resisted`;
+        document.title = `(${switches}) Chassit radio - ${json.title}`;
+
+        videoElement.play();
+        updateInterval = setInterval(updateTimer, 40);
+        console.log("Switched")
+    }
+
+    async function endHandler(t){
+        clearInterval(updateInterval);
+
+        await Promise.all([update(t), updateVideo()]);
         console.log("Ended");
     }
 
-    function updateTimer() {
+    async function updateTimer() {
         if (videoElement.currentTime < start) {
             videoElement.currentTime = start;
             console.log("Jump Forward");
@@ -59,11 +81,11 @@
 
         if (videoElement.currentTime >= end) {
             console.log("Restart");
-            endHandler();
+            await endHandler(end - start);
         }
 
         if (videoElement.currentTime >= videoElement.duration) {
-            endHandler();
+            await endHandler(videoElement.duration - start);
         }
     }
 })();

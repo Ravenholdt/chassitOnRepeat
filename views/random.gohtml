@@ -10,8 +10,9 @@
         Your browser does not support HTML5 video.
     </video>
     <h4 id="video-title">{{.video.title}}</h4>
-    <p id="video-loops"> Playtime: {{.video.time_formatted}}</p>
-    <p id="switches"> 0 videos resisted </p>
+    <p id="video-loops">Playtime: {{.video.time_formatted}}</p>
+    <p id="total-loops">Total Random Playtime: {{.total_time_formatted}}</p>
+    <p id="switches">0 videos resisted </p>
 
     <div id="video-data"
          data-id="{{.video.id}}"

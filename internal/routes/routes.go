@@ -73,6 +73,11 @@ func (r *Routes) SetupRoutes(app *fiber.App) {
 	// Serves the random video page
 	app.Get("/random", r.ViewRandom)
 
+	// Redirects /random-safe to the real url
+	app.Get("/random-safe", func(ctx *fiber.Ctx) error {
+		return ctx.Redirect("/random?safe")
+	})
+
 	// Redirects to a random video
 	app.Get("/im-feeling-lucky", r.ViewFeelingLucky)
 
