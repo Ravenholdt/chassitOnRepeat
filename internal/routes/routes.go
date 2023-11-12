@@ -52,14 +52,14 @@ func (r *Routes) SetupRoutes(app *fiber.App) {
 	// Returns playtime and video statistics
 	v1.Get("/stats", r.ApiStats)
 
-	// /api/video/* endpoints
+	// /api/v1/video/* endpoints
 	video := v1.Group("/video")
 	// Returns an array of all videos
 	video.Get("/", r.ApiGetVideos)
 	// Returns a random video
 	video.Get("/random", r.ApiRandom)
 
-	// /api/video/:id/* endpoints
+	// /api/v1/video/:id/* endpoints
 	specificVideo := video.Group("/:id")
 	// Returns a specific video specified by the id
 	specificVideo.Get("/", r.ApiGetVideo)
@@ -67,6 +67,18 @@ func (r *Routes) SetupRoutes(app *fiber.App) {
 	specificVideo.Post("/", limit, r.ApiPostVideoTime)
 	// Updates the start/end and safe status of the specified video.
 	specificVideo.Post("/settings", r.ApiPostVideoSettings)
+
+	// /api/v1/playlist/* endpoints
+	playlist := v1.Group("/playlist")
+	// Returns an array of all playlists
+	playlist.Get("/")
+
+	// /api/v1/playlist/:id/* endpoints
+	specificPlaylist := playlist.Group("/:id")
+	// Returns the details of the playlist
+	specificPlaylist.Get("/")
+	// Returns a random video from the playlist
+	specificPlaylist.Get("/random")
 
 	// Routes serving html content
 
@@ -92,9 +104,9 @@ func (r *Routes) SetupRoutes(app *fiber.App) {
 	app.Get("/:id", r.ViewLastVideos).Name("video")
 }
 
-func (r *Routes) GetResponse(v model.Video) *model.ResponseVideo {
+func (r *Routes) GetResponse(v model.Video) *utils.ResponseVideo {
 	file, _ := r.Files.GetVideoFile(v.ID)
-	res := &model.ResponseVideo{
+	res := &utils.ResponseVideo{
 		Video: v,
 		File:  utils.Val(file, internal.VideoFile{}),
 	}

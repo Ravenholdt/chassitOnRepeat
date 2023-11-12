@@ -1,8 +1,8 @@
-package model
+package utils
 
 import (
 	"chassit-on-repeat/internal"
-	"chassit-on-repeat/internal/utils"
+	"chassit-on-repeat/internal/model"
 	"encoding/json"
 	"github.com/gofiber/fiber/v2"
 	"sort"
@@ -11,20 +11,20 @@ import (
 type ResponseVideoMap map[string]ResponseVideo
 
 type ResponseVideo struct {
-	Video Video
+	Video model.Video
 	File  internal.VideoFile
 }
 
 func (v ResponseVideo) ToMap() fiber.Map {
-	t := utils.Val(v.Video.Time, 0)
+	t := Val(v.Video.Time, 0)
 	return fiber.Map{
 		"id":             v.Video.ID,
 		"title":          v.File.Name,
-		"start":          utils.Val(v.Video.Start, 0.0),
-		"end":            utils.Val(v.Video.End, 100000.0),
-		"safe":           utils.Val(v.Video.Safe, true),
+		"start":          Val(v.Video.Start, 0.0),
+		"end":            Val(v.Video.End, 100000.0),
+		"safe":           Val(v.Video.Safe, true),
 		"time":           t,
-		"time_formatted": utils.FormatReadableTime(t, true),
+		"time_formatted": FormatReadableTime(t, true),
 		"url":            v.File.Url,
 	}
 }
@@ -42,8 +42,8 @@ func (m *ResponseVideoMap) MarshalJSON() ([]byte, error) {
 	sort.Slice(list, func(i, j int) bool {
 		a := list[i]
 		b := list[j]
-		at := utils.Val(a.Video.Time, 0)
-		bt := utils.Val(b.Video.Time, 0)
+		at := Val(a.Video.Time, 0)
+		bt := Val(b.Video.Time, 0)
 		if at == 0 && bt == 0 {
 			return a.File.Name > b.File.Name
 		}

@@ -12,13 +12,13 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-func (r *Routes) MergeFileVideos(videos *model.ResponseVideoMap) {
+func (r *Routes) MergeFileVideos(videos *utils.ResponseVideoMap) {
 	for _, file := range r.Files.GetVideos() {
 		if v, ok := (*videos)[file.Id]; ok {
 			v.File = file
 			(*videos)[file.Id] = v
 		} else {
-			(*videos)[file.Id] = model.ResponseVideo{
+			(*videos)[file.Id] = utils.ResponseVideo{
 				Video: model.Video{
 					ID: file.Id,
 				},
@@ -98,7 +98,7 @@ func (r *Routes) ViewTopVideos(c *fiber.Ctx) error {
 	return r.renderVideoView(c, videos, history, totalTime, "video-list")
 }
 
-func (r *Routes) renderVideoView(c *fiber.Ctx, videos *model.ResponseVideoMap, history []fiber.Map, totalTime int64, timeRoute string) error {
+func (r *Routes) renderVideoView(c *fiber.Ctx, videos *utils.ResponseVideoMap, history []fiber.Map, totalTime int64, timeRoute string) error {
 	id := c.Params("id")
 	videoFile, _ := r.Files.GetVideoFile(id)
 
@@ -141,7 +141,7 @@ func (r *Routes) renderVideoView(c *fiber.Ctx, videos *model.ResponseVideoMap, h
 	})
 }
 
-func (r *Routes) getHistory(urlPrefix string) ([]fiber.Map, *model.ResponseVideoMap, int64, error) {
+func (r *Routes) getHistory(urlPrefix string) ([]fiber.Map, *utils.ResponseVideoMap, int64, error) {
 	videos, err := r.DB.GetDBVideos()
 	if err != nil {
 		log.Error().Str("tag", "routes_views").Err(err).Msg("Error getting DB videos")

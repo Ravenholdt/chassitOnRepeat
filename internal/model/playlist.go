@@ -9,15 +9,16 @@ import (
 
 type Playlist struct {
 	mgm.DefaultModel `bson:",inline"`
+	Id               string   `json:"id" bson:"id"`
 	Name             string   `json:"name" bson:"name"`
 	Time             *int64   `json:"playtime" bson:"playtime"`
 	Safe             *bool    `json:"safe" bson:"safe"`
-	LastPlayed       *int64   `json:"lastplayed" bson:"lastplayed"`
-	List             []string `json:"list" bson:"list"`
+	LastPlayed       *int64   `json:"last_played" bson:"last_played"`
+	Videos           []string `json:"videos" bson:"videos"`
 }
 
 func (p *Playlist) CollectionName() string {
-	return "data"
+	return "playlists"
 }
 
 func (p *Playlist) AddTime(t int64) {
