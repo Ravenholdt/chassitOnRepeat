@@ -1,7 +1,6 @@
 package model
 
 import (
-	"chassit-on-repeat/internal/utils"
 	"time"
 
 	"github.com/kamva/mgm/v3"
@@ -9,12 +8,12 @@ import (
 
 type Playlist struct {
 	mgm.DefaultModel `bson:",inline"`
-	Id               string   `json:"id" bson:"id"`
-	Name             string   `json:"name" bson:"name"`
-	Time             *int64   `json:"playtime" bson:"playtime"`
-	Safe             *bool    `json:"safe" bson:"safe"`
-	LastPlayed       *int64   `json:"last_played" bson:"last_played"`
-	Videos           []string `json:"videos" bson:"videos"`
+	Id               string    `json:"id" bson:"id"`
+	Name             string    `json:"name" bson:"name"`
+	Time             int64     `json:"playtime" bson:"playtime"`
+	Safe             bool      `json:"safe"`
+	LastPlayed       time.Time `json:"last_played" bson:"last_played"`
+	Videos           []string  `json:"videos" bson:"videos"`
 }
 
 func (p *Playlist) CollectionName() string {
@@ -22,15 +21,9 @@ func (p *Playlist) CollectionName() string {
 }
 
 func (p *Playlist) AddTime(t int64) {
-	newTime := utils.Val(p.Time, 0) + t
-	p.Time = &newTime
+	p.Time = p.Time + t
 }
 
 func (p *Playlist) UpdateLastPlayed() {
-	unix := time.Now().Unix()
-	p.LastPlayed = &unix
-}
-
-func (p *Playlist) SetSafe(safe bool) {
-	p.Safe = &safe
+	p.LastPlayed = time.Now().UTC()
 }

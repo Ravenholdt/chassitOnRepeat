@@ -8,7 +8,7 @@ import (
 
 type Video struct {
 	mgm.DefaultModel `bson:",inline"`
-	ID               string   `json:"id" bson:"name"`
+	Id               string   `json:"id" bson:"name"`
 	Start            *float64 `json:"start" bson:"start"`
 	End              *float64 `json:"end" bson:"end"`
 	Time             *int64   `json:"playtime" bson:"playtime"`
@@ -36,7 +36,7 @@ func (v *Video) SetSafe(safe bool) {
 
 func NewVideo(id string) *Video {
 	v := &Video{
-		ID: id,
+		Id: id,
 	}
 	v.SetSafe(true)
 	return v

@@ -2,25 +2,22 @@ package db
 
 import (
 	"chassit-on-repeat/internal/model"
-	"chassit-on-repeat/internal/utils"
 	"errors"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"math/rand"
 )
 
-func (d *DB) GetDBVideos() (*utils.ResponseVideoMap, error) {
+func (d *DB) GetDBVideos() (*ResponseDataMap, error) {
 	var result []model.Video
 	err := d.VideoColl.SimpleFind(&result, bson.M{}, options.Find().SetSort(bson.D{{"playtime", -1}}))
 	if err != nil {
 		return nil, errors.New("error data loading from database: " + err.Error())
 	}
 
-	videos := utils.ResponseVideoMap{}
+	videos := ResponseDataMap{}
 	for _, v := range result {
-		videos[v.ID] = utils.ResponseVideo{
-			Video: v,
-		}
+		videos[v.Id] = CreateVideoData(v, nil)
 	}
 	return &videos, nil
 }
@@ -36,8 +33,7 @@ func (d *DB) GetVideoFromId(id string) (*model.Video, error) {
 }
 
 func (d *DB) UpdateVideoPlaytime(id string, t int64) (*model.Video, error) {
-	video := &model.Video{}
-	err := d.VideoColl.First(bson.D{{"name", id}}, video)
+	video, err := d.GetVideoFromId(id)
 
 	// If no video is found create one
 	if err != nil {
@@ -56,8 +52,7 @@ func (d *DB) UpdateVideoPlaytime(id string, t int64) (*model.Video, error) {
 }
 
 func (d *DB) UpdateVideoSettings(id string, start *float64, end *float64, safe bool) (*model.Video, error) {
-	video := &model.Video{}
-	err := d.VideoColl.First(bson.D{{"name", id}}, video)
+	video, err := d.GetVideoFromId(id)
 
 	// If no video is found create one
 	if err != nil {

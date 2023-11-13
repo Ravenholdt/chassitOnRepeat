@@ -1,7 +1,7 @@
 package routes
 
 import (
-	"chassit-on-repeat/internal"
+	"chassit-on-repeat/internal/db"
 	"chassit-on-repeat/internal/model"
 	"chassit-on-repeat/internal/utils"
 	"chassit-on-repeat/static"
@@ -57,7 +57,7 @@ func (r *Routes) SetupRoutes(app *fiber.App) {
 	// Returns an array of all videos
 	video.Get("/", r.ApiGetVideos)
 	// Returns a random video
-	video.Get("/random", r.ApiRandom)
+	video.Get("/random", r.ApiVideoRandom)
 
 	// /api/v1/video/:id/* endpoints
 	specificVideo := video.Group("/:id")
@@ -71,14 +71,16 @@ func (r *Routes) SetupRoutes(app *fiber.App) {
 	// /api/v1/playlist/* endpoints
 	playlist := v1.Group("/playlist")
 	// Returns an array of all playlists
-	playlist.Get("/")
+	playlist.Get("/", r.ApiGetPlaylists)
 
 	// /api/v1/playlist/:id/* endpoints
 	specificPlaylist := playlist.Group("/:id")
 	// Returns the details of the playlist
-	specificPlaylist.Get("/")
+	specificPlaylist.Get("/", r.ApiGetPlaylist)
+	// Updates the repeated time of the specified playlist.
+	specificPlaylist.Post("/", r.ApiPostPlaylistTime)
 	// Returns a random video from the playlist
-	specificPlaylist.Get("/random")
+	specificPlaylist.Get("/random", r.ApiPlaylistRandom)
 
 	// Routes serving html content
 
@@ -104,11 +106,12 @@ func (r *Routes) SetupRoutes(app *fiber.App) {
 	app.Get("/:id", r.ViewLastVideos).Name("video")
 }
 
-func (r *Routes) GetResponse(v model.Video) *utils.ResponseVideo {
-	file, _ := r.Files.GetVideoFile(v.ID)
-	res := &utils.ResponseVideo{
-		Video: v,
-		File:  utils.Val(file, internal.VideoFile{}),
-	}
-	return res
+func (r *Routes) NotImplemented(ctx *fiber.Ctx) error {
+	return ctx.SendStatus(fiber.StatusNotImplemented)
+}
+
+func (r *Routes) GetResponse(v model.Video) *db.ResponseData {
+	file, _ := r.Files.GetVideoFile(v.Id)
+	res := db.CreateVideoData(v, file)
+	return &res
 }

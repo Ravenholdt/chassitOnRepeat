@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"chassit-on-repeat/internal/db"
 	"chassit-on-repeat/internal/model"
 	"chassit-on-repeat/internal/utils"
 	"errors"
@@ -12,18 +13,13 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-func (r *Routes) MergeFileVideos(videos *utils.ResponseVideoMap) {
+func (r *Routes) MergeFileVideos(videos *db.ResponseDataMap) {
 	for _, file := range r.Files.GetVideos() {
 		if v, ok := (*videos)[file.Id]; ok {
 			v.File = file
 			(*videos)[file.Id] = v
 		} else {
-			(*videos)[file.Id] = utils.ResponseVideo{
-				Video: model.Video{
-					ID: file.Id,
-				},
-				File: file,
-			}
+			(*videos)[file.Id] = db.CreateVideoData(model.Video{Id: file.Id}, &file)
 		}
 	}
 }
@@ -69,7 +65,7 @@ func (r *Routes) ViewFeelingLucky(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusNotFound, "Error getting random video")
 	}
 
-	return c.RedirectToRoute("video", fiber.Map{"id": video.ID}, 302)
+	return c.RedirectToRoute("video", fiber.Map{"id": video.Id}, 302)
 }
 
 // ViewLastVideos Renders a list of last videos and handle video view
@@ -98,7 +94,7 @@ func (r *Routes) ViewTopVideos(c *fiber.Ctx) error {
 	return r.renderVideoView(c, videos, history, totalTime, "video-list")
 }
 
-func (r *Routes) renderVideoView(c *fiber.Ctx, videos *utils.ResponseVideoMap, history []fiber.Map, totalTime int64, timeRoute string) error {
+func (r *Routes) renderVideoView(c *fiber.Ctx, videos *db.ResponseDataMap, history []fiber.Map, totalTime int64, timeRoute string) error {
 	id := c.Params("id")
 	videoFile, _ := r.Files.GetVideoFile(id)
 
@@ -141,36 +137,45 @@ func (r *Routes) renderVideoView(c *fiber.Ctx, videos *utils.ResponseVideoMap, h
 	})
 }
 
-func (r *Routes) getHistory(urlPrefix string) ([]fiber.Map, *utils.ResponseVideoMap, int64, error) {
-	videos, err := r.DB.GetDBVideos()
+func (r *Routes) getHistory(urlPrefix string) ([]fiber.Map, *db.ResponseDataMap, int64, error) {
+	data, err := r.DB.GetDBVideos()
 	if err != nil {
-		log.Error().Str("tag", "routes_views").Err(err).Msg("Error getting DB videos")
-		return nil, nil, 0, errors.New("error getting videos")
+		log.Error().Str("tag", "routes_views").Err(err).Msg("Error getting DB data")
+		return nil, nil, 0, errors.New("error getting data")
 	}
 
-	r.MergeFileVideos(videos)
+	r.MergeFileVideos(data)
+
+	playlists, err := r.DB.GetPlaylists()
+	if err != nil {
+		log.Error().Str("tag", "routes_views").Err(err).Msg("Error getting DB playlists")
+		return nil, nil, 0, errors.New("error getting playlists")
+	}
+	for _, playlist := range *playlists {
+		(*data)[playlist.Id] = db.CreatePlaylistData(playlist)
+	}
 
 	var totalTime int64
 	var history []fiber.Map
-	for _, v := range *videos {
-		name := v.Video.ID
-		if v.File.Name != "" {
-			name = v.File.Name
+	for _, v := range *data {
+		name := v.GetId()
+		if v.GetName() != "" {
+			name = v.GetName()
 		}
-		t := utils.Val(v.Video.Time, 0)
+		t := v.GetTime()
 		h := fiber.Map{
-			"url":            fmt.Sprintf("%s%s", urlPrefix, v.Video.ID),
+			"url":            fmt.Sprintf("%s%s%s", urlPrefix, v.GetPrefix(), v.GetId()),
 			"name":           name,
 			"time":           t,
-			"safe":           utils.Val(v.Video.Safe, true),
-			"last_played":    v.Video.LastPlayed,
+			"safe":           v.GetSafe(),
+			"last_played":    v.GetLastPlayed(),
 			"time_formatted": utils.FormatReadableTime(t, false),
 		}
 		totalTime += t
 		history = append(history, h)
 	}
 
-	return history, videos, totalTime, err
+	return history, data, totalTime, err
 }
 
 func (r *Routes) ViewRandom(c *fiber.Ctx) error {
@@ -182,8 +187,8 @@ func (r *Routes) ViewRandom(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusNotFound, "error getting random video")
 	}
 
-	id := r.Overrides.GetOverride(video.ID)
-	if id != video.ID {
+	id := r.Overrides.GetOverride(video.Id)
+	if id != video.Id {
 		// Replace with overridden video if not error happens
 		fromId, err := r.DB.GetVideoFromId(id)
 		if err == nil {

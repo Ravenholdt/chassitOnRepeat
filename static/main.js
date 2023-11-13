@@ -96,7 +96,7 @@
         if (value.ok) {
             let json = await value.json();
             videoLoops.innerText = "Total playtime: " + json.time_formatted;
-            updateCurrentPlaytime(t);
+            updateCurrentPlaytime(Math.floor(t));
         } else
             console.log(value.status, value.statusText, await value.text());
 

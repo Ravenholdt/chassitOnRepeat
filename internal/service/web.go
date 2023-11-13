@@ -13,13 +13,14 @@ import (
 	"github.com/gofiber/template/html/v2"
 	"github.com/rs/zerolog/log"
 	"math/rand"
-	"net/http"
 	"strings"
 )
 
 func createWebApp() *fiber.App {
 	// Initialize standard Go html template engine
-	engine := html.NewFileSystem(http.FS(views.Views), ".gohtml")
+	engine := html.NewFileSystem(views.GetViews(), ".gohtml")
+	debug := utils.GetBoolEnv("DEBUG", false)
+	engine.Reload(debug)
 
 	proxy := utils.GetBoolEnv("ENABLE_PROXY", false)
 	proxyHeader := ""
