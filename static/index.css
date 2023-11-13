@@ -100,6 +100,10 @@ See: https://github.com/mozilla/gecko-dev/blob/2f9eacd9d3d995c937b4251a5557d95d4
     display: flex;
 }
 
+#home {
+    justify-content: start;
+}
+
 #links {
     justify-content: center;
 }
