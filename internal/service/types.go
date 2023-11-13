@@ -2,6 +2,7 @@ package service
 
 import (
 	"chassit-on-repeat/internal/routes"
+
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -16,4 +17,6 @@ var endpointErrors = []string{
 	"Maybe ask a friend?",
 	"Everything happens for a reason...",
 	"This is not the endpoint you are looking for",
+	"Endpoints, come out to play!",
+	"My mama always said life was like a box of endpoints.",
 }
