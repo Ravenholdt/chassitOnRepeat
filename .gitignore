@@ -18,6 +18,8 @@ files/
 *.so
 *.dylib
 
+chassit-on-repeat
+
 # Test binary, built with `go test -c`
 *.test
 
