@@ -72,11 +72,17 @@ func (r *ResponseData) GetLastPlayed() *int64 {
 }
 
 func (r *ResponseData) GetPrefix() string {
-	if r.Video != nil {
-		return ""
-	} else {
+	if r.Playlist != nil {
 		return "playlist/"
 	}
+	return ""
+}
+
+func (r *ResponseData) GetTag() string {
+	if r.Playlist != nil {
+		return "Playlist"
+	}
+	return ""
 }
 
 func (r *ResponseData) ToMap() fiber.Map {
@@ -94,7 +100,7 @@ func (r *ResponseData) ToMap() fiber.Map {
 
 	if r.Video != nil {
 		result["start"] = utils.Val(r.Video.Start, 0.0)
-		result["end"] = utils.Val(r.Video.Start, 100000.0)
+		result["end"] = utils.Val(r.Video.End, 100000.0)
 		result["url"] = r.File.Url
 	}
 

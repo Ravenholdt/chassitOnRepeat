@@ -166,6 +166,7 @@ func (r *Routes) getHistory(urlPrefix string) ([]fiber.Map, *db.ResponseDataMap,
 		h := fiber.Map{
 			"url":            fmt.Sprintf("%s%s%s", urlPrefix, v.GetPrefix(), v.GetId()),
 			"name":           name,
+			"tag":            v.GetTag(),
 			"time":           t,
 			"safe":           v.GetSafe(),
 			"last_played":    v.GetLastPlayed(),

@@ -212,18 +212,40 @@ See: https://github.com/mozilla/gecko-dev/blob/2f9eacd9d3d995c937b4251a5557d95d4
     user-select: none;
 }
 
+.input-form {
+    margin-top: 1rem;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    grid-gap: 0.5rem;
+}
+
+.input-form label {
+    grid-column: 1 / 2;
+    align-self: center;
+}
+
 .settings {
     display: block;
     width: fit-content;
-    padding: 10px;
-    border: 1px solid #aaa;
-    border-radius: 2px;
-    box-shadow: 1px 1px #eee;
+    padding: 15px;
+    border: 1px solid rgba(170, 170, 170, 0.73);
+    border-radius: 5px;
+    box-shadow: 0 0 15px -5px rgba(0,0,0,0.5);
 }
 
 .setting {
-    display: block;
-    margin: 5px 5px 5px 0;
+    grid-column: 2 / 2;
+}
+
+.setting[type=number] {
+    border-radius: 5px;
+    padding: 5px 5px;
+    border: 1px solid #aeaeae;
+    box-sizing: border-box;
+}
+
+.setting[type=checkbox] {
+    justify-self: start;
 }
 
 button {
