@@ -8,9 +8,14 @@ import (
 	"math/rand"
 )
 
-func (d *DB) GetDBVideos() (*ResponseDataMap, error) {
+func (d *DB) GetDBVideos(videoIdFilter ...string) (*ResponseDataMap, error) {
 	var result []model.Video
-	err := d.VideoColl.SimpleFind(&result, bson.M{}, options.Find().SetSort(bson.D{{"playtime", -1}}))
+	filter := bson.M{}
+	if len(videoIdFilter) > 0 {
+		filter = bson.M{"name": bson.M{"$in": videoIdFilter}}
+	}
+
+	err := d.VideoColl.SimpleFind(&result, filter, options.Find().SetSort(bson.D{{"playtime", -1}}))
 	if err != nil {
 		return nil, errors.New("error data loading from database: " + err.Error())
 	}

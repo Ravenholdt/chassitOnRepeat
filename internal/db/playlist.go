@@ -2,6 +2,7 @@ package db
 
 import (
 	"chassit-on-repeat/internal/model"
+	"chassit-on-repeat/internal/utils"
 	"errors"
 	"github.com/kamva/mgm/v3"
 	"go.mongodb.org/mongo-driver/bson"
@@ -9,12 +10,13 @@ import (
 	"math/rand"
 )
 
-func (d *DB) updateSafeStatus(playlist *model.Playlist) (*model.Playlist, error) {
+func (d *DB) updatePlaylistJsonData(playlist *model.Playlist) (*model.Playlist, error) {
 	safe, err := d.GetPlaylistSafe(*playlist)
 	if err != nil {
 		return nil, errors.New("error checking if safe: " + err.Error())
 	}
 	playlist.Safe = safe
+	playlist.TimeFormatted = utils.FormatReadableTime(playlist.Time, true)
 	return playlist, nil
 }
 
@@ -27,7 +29,7 @@ func (d *DB) GetPlaylists() (*[]model.Playlist, error) {
 	var playlists []model.Playlist
 
 	for _, playlist := range result {
-		p, err := d.updateSafeStatus(&playlist)
+		p, err := d.updatePlaylistJsonData(&playlist)
 		if err != nil {
 			return nil, errors.New("error checking if safe: " + err.Error())
 		}
@@ -42,7 +44,7 @@ func (d *DB) GetPlaylistFromId(id string) (*model.Playlist, error) {
 	if err != nil {
 		return nil, errors.New("error loading data from database: " + err.Error())
 	}
-	return d.updateSafeStatus(result)
+	return d.updatePlaylistJsonData(result)
 }
 
 func (d *DB) UpdatePlaylistPlaytime(id string, t int64) (*model.Playlist, error) {

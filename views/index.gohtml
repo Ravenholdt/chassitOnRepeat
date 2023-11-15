@@ -1,73 +1,52 @@
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <link rel="stylesheet" href="/static/index.css">
-        <title>{{.video.title}} - Chassit on Repeat</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    </head>
-    <body>
-        <div class="container">
-            <div id="header">
-                <div id="home">
-                    <a href="/">Chassit on Repeat</a>
-                </div>
-                <div id="links">
-                    <a href="/random">Random</a>
-                    <a href="/im-feeling-lucky">I'm Feeling Lucky</a>
-                    <a href="/random?safe">Safe Random</a>
-                </div>
-                <div id="top-list">
-                    <a href="{{.time_link}}">{{.total_time_formatted}}</a>
-                </div>
+<div class="container">
+    {{template "header" .}}
+    <div id="video">
+        {{if .video.url}}
+        <video id="my-video" controls autoplay loop>
+            <source src="{{.video.url}}" type="video/mp4">
+            Your browser does not support HTML5 video.
+        </video>
+        <h1>{{.video.title}}</h1>
+        <p>Total playtime: <span id="video-loops">{{.video.time_formatted}}</span></p>
+        <p>Current playtime: <span id="current-loops">0s</span></p>
+        <div class="settings">
+            <h4>Settings:</h4>
+            <div class="input-form">
+                <label for="start">Start</label>
+                <input id="start" class="setting" placeholder="start" type="number" step="0.1" value="{{.start_input}}">
+                <label for="end">End</label>
+                <input id="end" class="setting" placeholder="end" type="number" step="0.1" value="{{.end_input}}">
+                <label for="safe">Safe?</label>
+                <input id="safe" class="setting" type="checkbox" name="safe" {{if .video.safe}}checked{{end}}>
             </div>
-            <div id="video">
-                {{if .video.url}}
-                <video id="my-video" controls autoplay loop>
-                    <source src="{{.video.url}}" type="video/mp4">
-                    Your browser does not support HTML5 video.
-                </video>
-                <h1>{{.video.title}}</h1>
-                <p id="video-loops">Total playtime:  {{.video.time_formatted}}</p>
-                <p id="current-loops">Current playtime: 0s</p>
-                <div class="settings">
-                    <h4>Settings:</h4>
-                    <div class="input-form">
-                        <label for="start">Start</label>
-                        <input id="start" class="setting" placeholder="start" type="number" step="0.1" value="{{.start_input}}">
-                        <label for="end">End</label>
-                        <input id="end" class="setting" placeholder="end" type="number" step="0.1" value="{{.end_input}}">
-                        <label for="safe">Safe?</label>
-                        <input id="safe" class="setting" type="checkbox" name="safe" {{if .video.safe}}checked{{end}}>
-                    </div>
-                    <hr/>
-                    <div>
-                        <button id="update-loop">Update</button>
-                        <span class="success o-0" id="update-success">Updated!</span>
-                    </div>
-                </div>
-                {{end}}
-            </div>
-
-            <div id="history">
-                {{range $i, $e := .history}}
-                    <a class="row" href="/{{.url}}">
-                        <div class="row-item">{{$i}}</div>
-                        <div class="row-item name">{{if ne .tag ""}}[{{.tag}}] {{end}}{{.name}}</div>
-                        <div class="row-item time">{{if .safe}}{{template "safe"}}{{else}}{{template "unsafe"}}{{end}}{{if gt .time 0}}{{.time_formatted}}{{end}}</div>
-                    </a>
-                {{end}}
+            <hr/>
+            <div>
+                <button id="update-loop">Update</button>
+                <span class="success o-0" id="update-success">Updated!</span>
             </div>
         </div>
-        {{if .video.url}}
-        <div id="video-data"
-             data-id="{{.video.id}}"
-             data-start="{{.video.start}}"
-             data-end="{{.video.end}}"
-             data-safe="{{.video.safe}}"
-             data-total_play_time="{{.total_time}}"
-             data-formatted_total_play_time="{{.total_time_formatted}}"
-        ></div>
-        <script src="/static/main.js"></script>
         {{end}}
-    </body>
-</html>
+    </div>
+
+    <div id="history" class="history-list">
+        {{range $i, $e := .history}}
+            <a class="row" href="/{{.url}}">
+                <div class="row-item">{{$i}}</div>
+                <div class="row-item name">{{if ne .tag ""}}[{{.tag}}] {{end}}{{.name}}</div>
+                <div class="row-item time">{{if .safe}}{{template "safe"}}{{else}}{{template "unsafe"}}{{end}}{{if gt .time 0}}{{.time_formatted}}{{end}}</div>
+            </a>
+        {{end}}
+    </div>
+</div>
+{{if .video.url}}
+<div id="video-data"
+     data-id="{{.video.id}}"
+     data-start="{{.video.start}}"
+     data-end="{{.video.end}}"
+     data-safe="{{.video.safe}}"
+     data-total_play_time="{{.total_time}}"
+     data-formatted_total_play_time="{{.total_time_formatted}}"
+></div>
+<script src="/static/utils.js"></script>
+<script src="/static/main.js"></script>
+{{end}}

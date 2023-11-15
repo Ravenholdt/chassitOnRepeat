@@ -58,6 +58,16 @@ See: https://github.com/mozilla/gecko-dev/blob/2f9eacd9d3d995c937b4251a5557d95d4
     "right"
 }
 
+.playlist-container {
+    display: grid;
+    grid-gap: 10px;
+    grid-template: auto auto auto / 1fr;
+    grid-template-areas:
+    "header"
+    "left"
+    "right"
+}
+
 #header {
     grid-area: header;
     display: grid;
@@ -67,6 +77,13 @@ See: https://github.com/mozilla/gecko-dev/blob/2f9eacd9d3d995c937b4251a5557d95d4
 @media (min-width: 960px) {
     .container {
         grid-template: 30px 1fr / 1fr 1fr;
+        grid-template-areas:
+        "header header"
+        "left right";
+    }
+
+    .playlist-container {
+        grid-template: 30px 1fr / 1.5fr 0.5fr;
         grid-template-areas:
         "header header"
         "left right";
@@ -128,6 +145,30 @@ See: https://github.com/mozilla/gecko-dev/blob/2f9eacd9d3d995c937b4251a5557d95d4
     }
 }
 
+#random-content {
+    grid-column: 1 / 3;
+}
+
+#playlists {
+    grid-column: 2;
+    grid-area: right;
+    display: table;
+    height: 100%;
+}
+
+#playlist-history {
+    display: table;
+    width: 100%;
+}
+
+#playlist-info {
+    width: 100%;
+}
+
+#video-loops, #total-loops, #current-loops, #switches {
+    font-weight: bold;
+}
+
 #my-video {
     width: 100%;
 }
@@ -184,12 +225,12 @@ See: https://github.com/mozilla/gecko-dev/blob/2f9eacd9d3d995c937b4251a5557d95d4
     height: 1rem;
 }
 
-#history:hover .icon-safe {
+.history-list:hover .icon-safe {
     color: #27ae60;
     visibility: visible;
 }
 
-#history:hover .icon-unsafe {
+.history-list:hover .icon-unsafe {
     color: #c0392b;
     visibility: visible;
 }

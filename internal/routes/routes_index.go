@@ -13,18 +13,18 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-func (r *Routes) MergeFileVideos(videos *db.ResponseDataMap) {
+func (r *Routes) mergeFileVideos(videos *db.ResponseDataMap, addFiles bool) {
 	for _, file := range r.Files.GetVideos() {
 		if v, ok := (*videos)[file.Id]; ok {
 			v.File = file
 			(*videos)[file.Id] = v
-		} else {
+		} else if addFiles {
 			(*videos)[file.Id] = db.CreateVideoData(model.Video{Id: file.Id}, &file)
 		}
 	}
 }
 
-func sortJustPlayed(history []fiber.Map) func(i int, j int) bool {
+func (r *Routes) sortJustPlayed(history []fiber.Map) func(i int, j int) bool {
 	return func(i, j int) bool {
 		aVal := history[i]["last_played"].(*int64)
 		bVal := history[j]["last_played"].(*int64)
@@ -44,7 +44,7 @@ func sortJustPlayed(history []fiber.Map) func(i int, j int) bool {
 	}
 }
 
-func sortTime(history []fiber.Map) func(i int, j int) bool {
+func (r *Routes) sortTime(history []fiber.Map) func(i int, j int) bool {
 	return func(i, j int) bool {
 		aVal := history[i]["time"].(int64)
 		bVal := history[j]["time"].(int64)
@@ -76,7 +76,7 @@ func (r *Routes) ViewLastVideos(c *fiber.Ctx) error {
 	}
 
 	// Sort based on time, if not played sort based on name
-	sort.Slice(history, sortJustPlayed(history))
+	sort.Slice(history, r.sortJustPlayed(history))
 
 	return r.renderVideoView(c, videos, history, totalTime, "video-top-list")
 }
@@ -89,7 +89,7 @@ func (r *Routes) ViewTopVideos(c *fiber.Ctx) error {
 	}
 
 	// Sort based on time, if not played sort based on name
-	sort.Slice(history, sortTime(history))
+	sort.Slice(history, r.sortTime(history))
 
 	return r.renderVideoView(c, videos, history, totalTime, "video-list")
 }
@@ -106,12 +106,12 @@ func (r *Routes) renderVideoView(c *fiber.Ctx, videos *db.ResponseDataMap, histo
 	// If no video is found or no video is selected only show history
 	if videoFile == nil {
 		return c.Status(fiber.StatusOK).Render("index", fiber.Map{
-			"title":                "Home",
+			"title":                "Home - Chassit on Repeat",
 			"time_link":            timeUrl,
 			"total_time":           totalTime,
 			"total_time_formatted": utils.FormatReadableTime(totalTime, true),
 			"history":              history,
-		})
+		}, "base")
 	}
 
 	video := (*videos)[videoFile.Id]
@@ -127,6 +127,7 @@ func (r *Routes) renderVideoView(c *fiber.Ctx, videos *db.ResponseDataMap, histo
 	}
 
 	return c.Status(fiber.StatusOK).Render("index", fiber.Map{
+		"title":                fmt.Sprintf("%s - Chassit on Repeat", video.GetName()),
 		"video":                video.ToMap(),
 		"time_link":            timeUrl,
 		"start_input":          startInput,
@@ -134,7 +135,7 @@ func (r *Routes) renderVideoView(c *fiber.Ctx, videos *db.ResponseDataMap, histo
 		"total_time":           totalTime,
 		"total_time_formatted": utils.FormatReadableTime(totalTime, true),
 		"history":              history,
-	})
+	}, "base")
 }
 
 func (r *Routes) getHistory(urlPrefix string) ([]fiber.Map, *db.ResponseDataMap, int64, error) {
@@ -144,7 +145,7 @@ func (r *Routes) getHistory(urlPrefix string) ([]fiber.Map, *db.ResponseDataMap,
 		return nil, nil, 0, errors.New("error getting data")
 	}
 
-	r.MergeFileVideos(data)
+	r.mergeFileVideos(data, true)
 
 	playlists, err := r.DB.GetPlaylists()
 	if err != nil {
@@ -177,41 +178,4 @@ func (r *Routes) getHistory(urlPrefix string) ([]fiber.Map, *db.ResponseDataMap,
 	}
 
 	return history, data, totalTime, err
-}
-
-func (r *Routes) ViewRandom(c *fiber.Ctx) error {
-	safe := c.Request().URI().QueryArgs().Has("safe")
-
-	video, err := r.DB.GetRandomVideo(r.Files.GetVideoIds(), safe)
-	if err != nil {
-		log.Error().Str("tag", "routes_views").Bool("safe", safe).Err(err).Msg("Error getting random video")
-		return fiber.NewError(fiber.StatusNotFound, "error getting random video")
-	}
-
-	id := r.Overrides.GetOverride(video.Id)
-	if id != video.Id {
-		// Replace with overridden video if not error happens
-		fromId, err := r.DB.GetVideoFromId(id)
-		if err == nil {
-			video = fromId
-		}
-	}
-
-	randomId := "RANDOM"
-	if safe {
-		randomId = "RANDOM-SAFE"
-	}
-
-	totalTime := utils.FormatReadableTime(0, true)
-	vid, err := r.DB.GetVideoFromId(randomId)
-	if err == nil {
-		t := utils.Val(vid.Time, 0)
-		totalTime = utils.FormatReadableTime(t, true)
-	}
-
-	return c.Status(fiber.StatusOK).Render("random", fiber.Map{
-		"video":                r.GetResponse(*video).ToMap(),
-		"total_time_formatted": totalTime,
-		"safe":                 safe,
-	})
 }

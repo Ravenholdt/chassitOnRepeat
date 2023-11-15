@@ -1,0 +1,15 @@
+<div id="header">
+    <div id="home">
+        <a href="/">Chassit on Repeat</a>
+    </div>
+    <div id="links">
+        <a href="/random">Random</a>
+        <a href="/im-feeling-lucky">I'm Feeling Lucky</a>
+        <a href="/random?safe">Safe Random</a>
+    </div>
+    <div id="top-list">
+        {{if ne .time_link nil}}
+            <a href="{{.time_link}}">{{.total_time_formatted}}</a>
+        {{end}}
+    </div>
+</div>

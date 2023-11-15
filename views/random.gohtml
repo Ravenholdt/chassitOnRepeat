@@ -1,25 +1,20 @@
-<!DOCTYPE html>
-<html lang="sv">
-<head>
-    <link rel="stylesheet" href="/static/index.css">
-    <title>(0) Chassit radio - {{.video.title}}</title>
-</head>
-<body>
-    <video id="my-video" controls autoplay style="width:100%;max-height: 800px;">
-        <source src="{{.video.url}}" type="video/mp4">
-        Your browser does not support HTML5 video.
-    </video>
-    <h4 id="video-title">{{.video.title}}</h4>
-    <p id="video-loops">Playtime: {{.video.time_formatted}}</p>
-    <p id="total-loops">Total Random Playtime: {{.total_time_formatted}}</p>
-    <p id="switches">0 videos resisted </p>
-
-    <div id="video-data"
-         data-id="{{.video.id}}"
-         data-start="{{.video.start}}"
-         data-end="{{.video.end}}"
-         data-safe="{{.safe}}"
-    ></div>
-    <script src="/static/random.js"></script>
-</body>
-</html>
+<div class="container">
+    {{template "header" .}}
+    <div id="random-content">
+        <video id="my-video" controls autoplay style="width:100%;max-height: 800px;">
+            <source src="{{.video.url}}" type="video/mp4">
+            Your browser does not support HTML5 video.
+        </video>
+        <h4 id="video-title">{{.video.title}}</h4>
+        <p>Playtime: <span id="video-loops">{{.video.time_formatted}}</span></p>
+        <p>Total Random Playtime: <span id="total-loops">{{.total_time_formatted}}</span></p>
+        <p><span id="switches">0</span> videos resisted </p>
+    </div>
+</div>
+<div id="video-data"
+     data-id="{{.video.id}}"
+     data-start="{{.video.start}}"
+     data-end="{{.video.end}}"
+     data-safe="{{.safe}}"
+></div>
+<script src="/static/random.js"></script>

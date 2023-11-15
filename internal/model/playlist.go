@@ -11,9 +11,10 @@ type Playlist struct {
 	Id               string    `json:"id" bson:"id"`
 	Name             string    `json:"name" bson:"name"`
 	Time             int64     `json:"playtime" bson:"playtime"`
-	Safe             bool      `json:"safe"`
 	LastPlayed       time.Time `json:"last_played" bson:"last_played"`
 	Videos           []string  `json:"videos" bson:"videos"`
+	Safe             bool      `json:"safe"`
+	TimeFormatted    string    `json:"time_formatted"`
 }
 
 func (p *Playlist) CollectionName() string {

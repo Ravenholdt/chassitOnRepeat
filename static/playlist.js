@@ -1,12 +1,11 @@
 (function (){
     const data = document.getElementById("video-data")
-    let id = data.dataset.id;
     let start = parseFloat(data.dataset.start);
     let end = parseFloat(data.dataset.end);
-    let safe = data.dataset.safe === 'true';
+    let playlist_id = data.dataset.playlist_id;
+    let playlist_name = data.dataset.playlist_name;
     data.remove();
 
-    let switches = 0;
     console.log(start);
     console.log(end);
 
@@ -18,12 +17,12 @@
     const videoTitle = document.getElementById("video-title");
     const videoLoops = document.getElementById("video-loops");
     const totalLoops = document.getElementById("total-loops");
-    const videoSwitches = document.getElementById("switches");
+    const currentLoops = document.getElementById("current-loops");
+
+    let currentTime = 0;
 
     async function update(t) {
-
-        const id = safe ? 'RANDOM-SAFE': 'RANDOM';
-        const value = await fetch(`/api/v1/video/${id}`, {
+        const value = await fetch(`/api/v1/playlist/${playlist_id}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -41,25 +40,21 @@
     }
 
     async function updateVideo() {
-        const resp = await fetch("/api/v1/video/random" + (safe ? '?safe': ''))
+        const resp = await fetch(`/api/v1/playlist/${playlist_id}/random`)
         const json = await resp.json();
-        console.log(json);
 
         start = json.start;
         end = json.end;
-        id = json.id;
 
         videoElement.src = json.url;
         videoElement.currentTime = start;
 
-        console.log(start, end, id, videoElement.currentTime, videoElement.src);
+        console.log(start, end, videoElement.currentTime, videoElement.src);
 
         videoTitle.innerText = json.title;
         videoLoops.innerText = json.time_formatted;
 
-        switches++;
-        videoSwitches.innerText = `${switches}`;
-        document.title = `(${switches}) Chassit radio - ${json.title}`;
+        document.title = `${json.title} - ${playlist_name} - Chassit on Repeat`;
 
         videoElement.play();
         updateInterval = setInterval(updateTimer, 40);
@@ -68,6 +63,9 @@
 
     async function endHandler(t){
         clearInterval(updateInterval);
+
+        currentTime += t;
+        currentLoops.innerText = formatTime(currentTime)
 
         await Promise.all([update(t), updateVideo()]);
         console.log("Ended");
