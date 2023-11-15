@@ -95,6 +95,9 @@ func (d *DB) GetRandomPlaylistVideo(id string, videoIds []string) (*model.Video,
 	if err != nil {
 		return nil, errors.New("no random video found: " + err.Error())
 	}
+	if len(dbVideos) <= 0 {
+		return nil, errors.New("no random video found")
+	}
 	randVid := dbVideos[rand.Intn(len(dbVideos))]
 	return &randVid, nil
 }

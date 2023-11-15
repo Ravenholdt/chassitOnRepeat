@@ -13,8 +13,8 @@ type Playlist struct {
 	Time             int64     `json:"playtime" bson:"playtime"`
 	LastPlayed       time.Time `json:"last_played" bson:"last_played"`
 	Videos           []string  `json:"videos" bson:"videos"`
-	Safe             bool      `json:"safe"`
-	TimeFormatted    string    `json:"time_formatted"`
+	Safe             bool      `json:"safe" bson:"-"`
+	TimeFormatted    string    `json:"time_formatted" bson:"-"`
 }
 
 func (p *Playlist) CollectionName() string {
