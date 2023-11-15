@@ -1,26 +1,33 @@
 (function (){
-    const data = document.getElementById("video-data")
+    const data = elementById("video-data")
     let start = parseFloat(data.dataset.start);
     let end = parseFloat(data.dataset.end);
     let playlist_id = data.dataset.playlist_id;
     let playlist_name = data.dataset.playlist_name;
     data.remove();
 
-    console.log(start);
-    console.log(end);
-
-    const videoElement = document.getElementById("my-video");
+    /**
+     * @type {HTMLVideoElement}
+     */
+    const videoElement = elementById("my-video");
     videoElement.volume = 0.5;
 
-    let updateInterval = setInterval(updateTimer, 40);
+    console.log(start, end, videoElement.currentTime, videoElement.src);
 
-    const videoTitle = document.getElementById("video-title");
-    const videoLoops = document.getElementById("video-loops");
-    const totalLoops = document.getElementById("total-loops");
-    const currentLoops = document.getElementById("current-loops");
+    let updateInterval = setInterval(updateCheckFunc(videoElement, start, end, endHandler), 40);
+
+    const videoTitle = elementById("video-title");
+    const videoLoops = elementById("video-loops");
+    const totalLoops = elementById("total-loops");
+    const currentLoops = elementById("current-loops");
 
     let currentTime = 0;
 
+    /**
+     * Updates the played time on the playlist
+     * @param {number} t The played time
+     * @returns {Promise<void>}
+     */
     async function update(t) {
         const value = await fetch(`/api/v1/playlist/${playlist_id}`, {
             method: 'POST',
@@ -39,13 +46,25 @@
             console.log(value.status, value.statusText, await value.text());
     }
 
+    /**
+     * Updates the video with a new one from the api
+     * @returns {Promise<void>}
+     */
     async function updateVideo() {
-        const resp = await fetch(`/api/v1/playlist/${playlist_id}/random`)
+        await updateVideoInfo(`/api/v1/playlist/${playlist_id}/random`)
+    }
+
+    /**
+     * Updates the page with video data from a json response
+     * @param {string} url The url that will fetch a new video
+     * @returns {Promise<void>}
+     */
+    async function updateVideoInfo(url) {
+        const resp = await fetch(url)
         const json = await resp.json();
 
         start = json.start;
         end = json.end;
-
         videoElement.src = json.url;
         videoElement.currentTime = start;
 
@@ -55,12 +74,16 @@
         videoLoops.innerText = json.time_formatted;
 
         document.title = `${json.title} - ${playlist_name} - Chassit on Repeat`;
-
-        videoElement.play();
-        updateInterval = setInterval(updateTimer, 40);
+        await videoElement.play();
+        updateInterval = setInterval(updateCheckFunc(videoElement, start, end, endHandler), 40);
         console.log("Switched")
     }
 
+    /**
+     * Handler for when the video ends
+     * @param {number} t The played time
+     * @returns {Promise<void>}
+     */
     async function endHandler(t){
         clearInterval(updateInterval);
 
@@ -71,19 +94,16 @@
         console.log("Ended");
     }
 
-    async function updateTimer() {
-        if (videoElement.currentTime < start) {
-            videoElement.currentTime = start;
-            console.log("Jump Forward");
-        }
-
-        if (videoElement.currentTime >= end) {
-            console.log("Restart");
-            await endHandler(end - start);
-        }
-
-        if (videoElement.currentTime >= videoElement.duration) {
-            await endHandler(videoElement.duration - start);
-        }
+    /**
+     * Changes the video to the clicked video
+     * @param {MouseEvent} e The click event
+     */
+    async function videoClicked(e) {
+        await updateVideoInfo(`/api/v1/video/${this.dataset.id}`)
     }
+
+    // Adds click event listeners to all playlist videos
+    Array.from(elementsByClass("playlist-video")).forEach(function(e) {
+        e.addEventListener("click", videoClicked)
+    })
 })();
