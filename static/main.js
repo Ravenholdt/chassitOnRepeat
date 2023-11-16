@@ -1,5 +1,5 @@
 (function (){
-    const data = document.getElementById("video-data")
+    const data = elementById("video-data")
     let id = data.dataset.id;
     let start = parseFloat(data.dataset.start);
     let end = parseFloat(data.dataset.end);
@@ -13,17 +13,20 @@
         return;
     }
 
-    console.log("Total playtime: " + totalPlaytime);
-    console.log("Total playtime: " + formattedTotalPlaytime);
-    console.log("Start: " + start);
-    console.log("End: " + end);
-    console.log("Safe: " + safe)
+    console.log(`Total playtime: ${totalPlaytime}`);
+    console.log(`Total playtime: ${formattedTotalPlaytime}`);
+    console.log(`Start: ${start}`);
+    console.log(`End: ${end}`);
+    console.log(`Safe: ${safe}`)
 
-    const videoElement = document.getElementById("my-video");
+    /**
+     * @type {HTMLVideoElement}
+     */
+    const videoElement = elementById("my-video");
     videoElement.volume = 0.5;
 
-    const videoLoops = document.getElementById("video-loops");
-    const currentLoops = document.getElementById("current-loops");
+    const videoLoops = elementById("video-loops");
+    const currentLoops = elementById("current-loops");
     let currentTime = 0;
 
     let updateTimeInterval;
@@ -36,44 +39,12 @@
     }
 
     /**
-     * Format a number to the given amount of digits
-     * @param {number} num
-     * @param {number} digits
-     */
-    function formatNumber(num, digits = 2) {
-        return num.toLocaleString('en-US', {minimumIntegerDigits: digits, useGrouping: false})
-    }
-
-    /**
-     * Formats the time to show days, hours, minutes and seconds
-     * @param {number} time
-     */
-    function formatTime(time) {
-        const hourSeconds = time % (60 * 60 * 24);
-        const minuteSeconds = hourSeconds % (60 * 60)
-        const remainingSeconds = minuteSeconds % 60
-
-        const days = Math.floor(time / (60 * 60 * 24))
-        const hours = Math.floor(hourSeconds / (60 * 60))
-        const minutes = Math.floor(minuteSeconds / 60)
-        const seconds = Math.floor(remainingSeconds)
-
-        if (days > 0)
-            return `${days}d ${formatNumber(hours)}h ${formatNumber(minutes)}m ${formatNumber(seconds)}s`;
-        if (hours > 0)
-            return `${formatNumber(hours)}h ${formatNumber(minutes)}m ${formatNumber(seconds)}s`
-        if (minutes > 0)
-            return `${formatNumber(minutes)}m ${formatNumber(seconds)}s`
-        return `${seconds}s`
-    }
-
-    /**
      * Update the current playtime
      * @param {number} time
      */
     function updateCurrentPlaytime(time) {
         currentTime += time;
-        currentLoops.innerText = "Current playtime: " + formatTime(currentTime);
+        currentLoops.innerText = formatTime(currentTime);
     }
 
     /**
@@ -95,8 +66,8 @@
 
         if (value.ok) {
             let json = await value.json();
-            videoLoops.innerText = "Total playtime: " + json.time_formatted;
-            updateCurrentPlaytime(t);
+            videoLoops.innerText = json.time_formatted;
+            updateCurrentPlaytime(Math.floor(t));
         } else
             console.log(value.status, value.statusText, await value.text());
 
@@ -116,7 +87,7 @@
             })
         });
         if (value.ok) {
-            const success = document.getElementById("update-success");
+            const success = elementById("update-success");
 
             success.classList.remove("o-0")
             setTimeout(() => {
@@ -126,17 +97,17 @@
             console.log(value.status, value.statusText, await value.text());
     }
 
-    document.getElementById("update-loop").addEventListener("click", async (event) => {
+    elementById("update-loop").addEventListener("click", async (event) => {
         await sendInterval();
     });
 
 
-    document.getElementById("safe").addEventListener("change",(event) =>{
+    elementById("safe").addEventListener("change",(event) =>{
         safe = event.target.checked;
     });
 
 
-    document.getElementById("start").addEventListener("change",(event) =>{
+    elementById("start").addEventListener("change",(event) =>{
         let s = event.target.value;
         if (s === "")
             start = 0;
@@ -149,7 +120,7 @@
         }
     });
 
-    document.getElementById("end").addEventListener("change", (event) => {
+    elementById("end").addEventListener("change", (event) => {
         let e = event.target.value;
         if (e === "")
             end = 90000;
@@ -190,7 +161,7 @@
 
         if (videoElement.currentTime >= end) {
             videoElement.currentTime = start;
-            videoElement.play()
+            await videoElement.play()
 
             console.log("Restart");
             await update(end - start);

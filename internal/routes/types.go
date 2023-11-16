@@ -11,7 +11,7 @@ type Routes struct {
 	Overrides *internal.Overrides
 }
 
-type updateVideoTimeRequest struct {
+type updateTimeRequest struct {
 	Time float64 `json:"time"`
 }
 

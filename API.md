@@ -189,9 +189,9 @@ This is a documentation for the Chassit on Repeat API
 
 ##### Parameters
 
-> | name |  type      | data type      | description                           |
-> |------|------------|----------------|---------------------------------------|
-> | `id` |  required  | string         | The id of the video to get info about |
+> | name |  type      | data type      | description                   |
+> |------|------------|----------------|-------------------------------|
+> | `id` |  required  | string         | The id of the video to update |
 
 ##### Post data
 > | name   |  type      | data type | description                           |
@@ -220,9 +220,9 @@ This is a documentation for the Chassit on Repeat API
 
 ##### Parameters
 
-> | name |  type      | data type      | description                           |
-> |------|------------|----------------|---------------------------------------|
-> | `id` |  required  | string         | The id of the video to get info about |
+> | name |  type      | data type      | description                   |
+> |------|------------|----------------|-------------------------------|
+> | `id` |  required  | string         | The id of the video to update |
 
 ##### Post data
 > | name    | type     | data type | description                        |
@@ -242,6 +242,126 @@ This is a documentation for the Chassit on Repeat API
 
 > ```javascript
 >  curl -X POST -H "Content-Type: application/json" -d '{"start": null, "end": 200, "safe": true}' http://localhost:8080/api/v1/video/iR-K2rUP86M/settings
+> ```
+
+</details>
+
+## GET /api/v1/playlist
+
+<details>
+    <summary><code>Returns an array of all playlists</code></summary>
+
+##### Parameters
+
+> None
+
+##### Query
+
+> None
+
+##### Responses
+
+> | http code | content-type       | response                                                                                                                                                                                                                                                                                            |
+> |-----------|--------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+> | `200`     | `application/json` | Json Array with playlist info <br/>`[{"created_at":"2023-11-13T18:15:00Z","updated_at":"2023-11-15T22:42:39.075Z","id":"hMNXaW","name":"Unsafe Playlist","playtime":1815,"last_played":"2023-11-15T22:42:39.075Z","videos":["Y9EKzvTo3g0","gDtElkw_o6w"],"safe":false,"time_formatted":"30m 15s"}]` |
+
+##### Example cURL
+
+> ```javascript
+>  curl -X GET -H "Content-Type: application/json" http://localhost:8080/api/v1/playlist
+> ```
+
+</details>
+
+
+## GET /api/v1/playlist/{id}
+
+<details>
+    <summary><code>Returns a specific playlist</code></summary>
+
+##### Parameters
+
+> | name |  type      | data type      | description                              |
+> |------|------------|----------------|------------------------------------------|
+> | `id` |  required  | string         | The id of the playlist to get info about |
+
+##### Query
+
+> None
+
+##### Responses
+
+> | http code | content-type       | response                                                                                                                                                                                                                                                       |
+> |-----------|--------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+> | `200`     | `application/json` | `{"created_at":"2023-11-13T18:15:00Z","updated_at":"2023-11-15T22:42:39.075Z","id":"hMNXaW","name":"Unsafe Playlist","playtime":1815,"last_played":"2023-11-15T22:42:39.075Z","videos":["Y9EKzvTo3g0","gDtElkw_o6w"],"safe":false,"time_formatted":"30m 15s"}` |
+> | `404`     | `application/json` | `{"error":{"code":403,"message":"Playlist not found"},"message":"There is nothing here...","path":"/api/v1/playlist/hMNXaW"}`                                                                                                                                  |
+
+##### Example cURL
+
+> ```javascript
+>  curl -X GET -H "Content-Type: application/json" http://localhost:8080/api/v1/playlist/hMNXaW
+> ```
+
+</details>
+
+
+## POST /api/v1/playlist/{id}
+
+<details>
+    <summary><code>Updates the repeated time of the specified playlist</code></summary>
+
+##### Parameters
+
+> | name |  type      | data type      | description                      |
+> |------|------------|----------------|----------------------------------|
+> | `id` |  required  | string         | The id of the playlist to update |
+
+##### Post data
+> | name   |  type      | data type | description                              |
+> |--------|------------|-----------|------------------------------------------|
+> | `time` |  required  | int       | The repeated time to add to the playlist |
+
+##### Responses
+
+> | http code | content-type       | response                                                                                                                                                                                                                                                                                     |
+> |-----------|--------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+> | `200`     | `application/json` | The updated playlist info<br/>`{"created_at":"2023-11-13T18:15:00Z","updated_at":"2023-11-15T22:42:39.075Z","id":"hMNXaW","name":"Unsafe Playlist","playtime":1815,"last_played":"2023-11-15T22:42:39.075Z","videos":["Y9EKzvTo3g0","gDtElkw_o6w"],"safe":false,"time_formatted":"30m 15s"}` |
+> | `400`     | `application/json` | `{"error":{"code":400,"message":"Bad body"},"message":"There is nothing here...","path":"/api/v1/video/hMNXaW"}`                                                                                                                                                                             |
+
+##### Example cURL
+
+> ```javascript
+>  curl -X POST -H "Content-Type: application/json" -d '{"time": 10}' http://localhost:8080/api/v1/playlist/hMNXaW
+> ```
+
+</details>
+
+
+## GET /api/v1/playlist/{id}/random
+
+<details>
+    <summary><code>Returns a random video from a playlist</code></summary>
+
+##### Parameters
+
+> None
+
+##### Query
+
+> None
+
+##### Responses
+
+> | http code | content-type       | response                                                                                                                                                              |
+> |-----------|--------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+> | `200`     | `application/json` | `{"end":205,"id":"iR-K2rUP86M","safe":true,"start":0,"time":733080,"time_formatted":"8d 11h 38m 00s","title":"DAGOTHWAVE","url":"/files/DAGOTHWAVE-iR-K2rUP86M.mp4"}` |
+> | `404`     | `application/json` | `{"error":{"code":403,"message":"Error getting random video"},"message":"There is nothing here...","path":"/api/v1/playlist/hMNXaW/random"}`                          |
+
+
+##### Example cURL
+
+> ```javascript
+>  curl -X GET -H "Content-Type: application/json" http://localhost:8080/api/v1/playlist/hMNXaW/random
 > ```
 
 </details>

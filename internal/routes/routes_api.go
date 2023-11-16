@@ -48,7 +48,7 @@ func (r *Routes) ApiGetVideos(c *fiber.Ctx) error {
 	}
 
 	for i, video := range *videos {
-		file, e := r.Files.GetVideoFile(video.Video.ID)
+		file, e := r.Files.GetVideoFile(video.Video.Id)
 		if e == nil {
 			video.File = *file
 			(*videos)[i] = video
@@ -80,7 +80,7 @@ func (r *Routes) ApiGetVideo(c *fiber.Ctx) error {
 func (r *Routes) ApiPostVideoTime(c *fiber.Ctx) error {
 	id := c.Params("id")
 
-	var req updateVideoTimeRequest
+	var req updateTimeRequest
 	err := c.BodyParser(&req)
 	if err != nil {
 		log.Error().Str("tag", "routes_api").Str("id", id).Err(err).Msg("Error parsing post video time request")
@@ -133,13 +133,13 @@ func (r *Routes) ApiPostVideoSettings(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(r.GetResponse(*v))
 }
 
-// ApiRandom Returns a random video.
+// ApiVideoRandom Returns a random video.
 // Query parms:
 //
 //	"safe": boolean
 //
 // /api/v1/video/random
-func (r *Routes) ApiRandom(c *fiber.Ctx) error {
+func (r *Routes) ApiVideoRandom(c *fiber.Ctx) error {
 	safe := c.Request().URI().QueryArgs().Has("safe")
 
 	video, err := r.DB.GetRandomVideo(r.Files.GetVideoIds(), safe)
@@ -148,8 +148,93 @@ func (r *Routes) ApiRandom(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusNotFound, "Error getting random video")
 	}
 
-	id := r.Overrides.GetOverride(video.ID)
-	if id != video.ID {
+	id := r.Overrides.GetOverride(video.Id)
+	if id != video.Id {
+		// Replace with overridden video if not error happens
+		fromId, err := r.DB.GetVideoFromId(id)
+		if err == nil {
+			video = fromId
+		}
+	}
+
+	return c.Status(fiber.StatusOK).JSON(r.GetResponse(*video))
+}
+
+// ApiGetPlaylists Returns an array of all playlists.
+//
+// GET /api/v1/playlist
+func (r *Routes) ApiGetPlaylists(c *fiber.Ctx) error {
+	playlists, err := r.DB.GetPlaylists()
+	if err != nil {
+		return err
+	}
+
+	return c.Status(fiber.StatusOK).JSON(playlists)
+}
+
+// ApiGetPlaylist Returns a specific playlist specified by the id.
+//
+// GET /api/v1/playlist/:id
+func (r *Routes) ApiGetPlaylist(c *fiber.Ctx) error {
+	id := c.Params("id")
+	response, err := r.DB.GetPlaylistFromId(id)
+	if err != nil {
+		log.Error().Str("tag", "routes_api").Str("id", id).Err(err).Msg("Error getting playlist")
+		return fiber.NewError(fiber.StatusNotFound, "Playlist not found")
+	}
+
+	return c.Status(fiber.StatusOK).JSON(*response)
+}
+
+// ApiPostPlaylistTime Updates the repeated time of the specified playlist.
+// Post json data:
+//
+//	"time": integer
+//
+// POST /api/v1/playlist/:id
+func (r *Routes) ApiPostPlaylistTime(c *fiber.Ctx) error {
+	id := c.Params("id")
+
+	var req updateTimeRequest
+	err := c.BodyParser(&req)
+	if err != nil {
+		log.Error().Str("tag", "routes_api").Str("id", id).Err(err).Msg("Error parsing post playtime time request")
+		return fiber.NewError(fiber.StatusBadRequest, "Bad body")
+	}
+
+	if req.Time < 0 {
+		log.Error().Str("tag", "routes_api").Str("id", id).Err(err).Msg("Input time was negative")
+		return fiber.NewError(fiber.StatusBadRequest, "Bad body")
+	}
+
+	if req.Time > 90_000 {
+		log.Error().Str("tag", "routes_api").Str("id", id).Err(err).Msg("Input time was too large")
+		return fiber.NewError(fiber.StatusBadRequest, "Bad body")
+	}
+
+	v, err := r.DB.UpdatePlaylistPlaytime(id, int64(req.Time))
+	if err != nil {
+		log.Error().Str("tag", "routes_api").Str("id", id).Err(err).Msg("Error updating playtime time")
+		return fiber.NewError(fiber.StatusBadRequest, "Error updating time")
+	}
+
+	return c.Status(fiber.StatusOK).JSON(*v)
+}
+
+// ApiPlaylistRandom Returns a random video from a playlist.
+//
+// /api/v1/playlist/:id/random
+func (r *Routes) ApiPlaylistRandom(c *fiber.Ctx) error {
+	playlistId := c.Params("id")
+
+	video, err := r.DB.GetRandomPlaylistVideo(playlistId, r.Files.GetVideoIds())
+	if err != nil {
+		log.Error().Str("tag", "routes_api").Err(err).Msg("Error getting random video")
+		return fiber.NewError(fiber.StatusNotFound, "Error getting random video")
+	}
+
+	id := r.Overrides.GetOverride(video.Id)
+	if id != video.Id {
 		// Replace with overridden video if not error happens
 		fromId, err := r.DB.GetVideoFromId(id)
 		if err == nil {

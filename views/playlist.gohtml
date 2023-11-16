@@ -1,0 +1,34 @@
+<div class="playlist-container">
+    {{template "header" .}}
+    <div id="playlist-video">
+        <video id="my-video" controls autoplay>
+            <source src="{{.video.url}}" type="video/mp4">
+            Your browser does not support HTML5 video.
+        </video>
+        <h1 id="video-title">{{.video.title}}</h1>
+        <p>Video Playtime: <span id="video-loops">{{.video.time_formatted}}</span></p>
+        <p>Total Playlist Playtime: <span id="total-loops">{{.total_time_formatted}}</span></p>
+        <p>Current Playlist Playtime: <span id="current-loops">0s</span></p>
+    </div>
+    <div id="playlist-info">
+        <h1>{{.name}}</h1>
+        <div id="playlist-history" class="history-list">
+            {{range $i, $e := .videos}}
+                <a class="row playlist-video" data-id="{{.id}}">
+                    <div class="row-item">{{$i}}</div>
+                    <div class="row-item name">{{.name}}</div>
+                    <div class="row-item">{{if .safe}}{{template "safe"}}{{else}}{{template "unsafe"}}{{end}}</div>
+                </a>
+            {{end}}
+        </div>
+    </div>
+</div>
+<div id="video-data"
+     data-id="{{.video.id}}"
+     data-start="{{.video.start}}"
+     data-end="{{.video.end}}"
+     data-playlist_id="{{.id}}"
+     data-playlist_name="{{.name}}"
+></div>
+<script src="/static/utils.js"></script>
+<script src="/static/playlist.js"></script>

@@ -18,8 +18,9 @@ func NewService(handler *internal.FileHandler, overrides *internal.Overrides) *S
 
 	r := routes.Routes{
 		DB: &db.DB{
-			Client:    client,
-			VideoColl: mgm.Coll(&model.Video{}),
+			Client:       client,
+			VideoColl:    mgm.Coll(&model.Video{}),
+			PlaylistColl: mgm.Coll(&model.Playlist{}),
 		},
 		Files:     handler,
 		Overrides: overrides,

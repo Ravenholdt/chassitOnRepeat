@@ -1,0 +1,13 @@
+<div class="container">
+    {{template "header" .}}
+    <div id="history" class="history-list">
+        {{range $i, $e := .playlists}}
+            <a class="row" href="{{.url}}">
+                <div class="row-item">{{$i}}</div>
+                <div class="row-item name">{{.name}}</div>
+                <div class="row-item">{{.videos}} videos</div>
+                <div class="row-item time">{{if .safe}}{{template "safe"}}{{else}}{{template "unsafe"}}{{end}}{{if gt .time 0}}{{.time_formatted}}{{end}}</div>
+            </a>
+        {{end}}
+    </div>
+</div>
