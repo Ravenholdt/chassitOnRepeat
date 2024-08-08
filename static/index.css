@@ -19,6 +19,10 @@ body {
     background-color: #fefefe;
 }
 
+p {
+    font-size: 1em;
+}
+
 /**
 Remove the inner border and padding in Firefox.
 */
@@ -70,8 +74,9 @@ See: https://github.com/mozilla/gecko-dev/blob/2f9eacd9d3d995c937b4251a5557d95d4
 
 #header {
     grid-area: header;
-    display: grid;
-    grid-template: 1fr / 0fr auto 1fr;
+    display: flex;
+    flex-flow: row;
+    flex-wrap: wrap;
 }
 
 @media (min-width: 960px) {
@@ -98,14 +103,20 @@ See: https://github.com/mozilla/gecko-dev/blob/2f9eacd9d3d995c937b4251a5557d95d4
 
 #header div {
     padding: 5px;
-    font-size: 14pt;
+    font-size: 1em;
 }
 
 #header a {
-    padding: 5px;
+    padding: 0 5px;
     color: #000;
     text-decoration-style: dashed;
     text-wrap: nowrap;
+}
+
+@media (min-width: 600px) {
+    #header a {
+        padding: 5px;
+    }
 }
 
 #header a:hover {
@@ -136,7 +147,14 @@ See: https://github.com/mozilla/gecko-dev/blob/2f9eacd9d3d995c937b4251a5557d95d4
 }
 
 #video h1 {
+    font-size: 1.5em;
     word-break: break-word;
+}
+
+@media (min-width: 600px) {
+    #video h1 {
+        font-size: 2em;
+    }
 }
 
 @media (min-width: 960px) {
@@ -185,6 +203,7 @@ See: https://github.com/mozilla/gecko-dev/blob/2f9eacd9d3d995c937b4251a5557d95d4
     background-color: #fff;
     text-decoration: none;
     color: #000;
+    font-size: 1em;
 }
 
 .row .name {
