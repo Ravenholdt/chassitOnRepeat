@@ -88,4 +88,19 @@
         await Promise.all([update(t), updateVideo()]);
         console.log("Ended");
     }
+
+    navigator.mediaSession.setActionHandler("nexttrack", function () {
+        mainTrackNext();
+    });
+
+    navigator.mediaSession.setActionHandler("previoustrack", function () {
+        mainTrackPrevious();
+    });
+
+    function mainTrackNext(){
+        window.location.reload;
+    };
+    function mainTrackPrevious(){
+        window.location.href = "im-feeling-lucky";
+    };
 })();

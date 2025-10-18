@@ -142,11 +142,11 @@
         stopTimer();
     })
 
-    navigator.mediaSession.setActionHandler("previoustrack", function () {
+    navigator.mediaSession.setActionHandler("nexttrack", function () {
         mainTrackNext();
     });
 
-    navigator.mediaSession.setActionHandler("nexttrack", function () {
+    navigator.mediaSession.setActionHandler("previoustrack", function () {
         mainTrackPrevious();
     });
 
