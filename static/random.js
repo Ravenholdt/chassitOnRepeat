@@ -98,7 +98,7 @@
     });
 
     function mainTrackNext(){
-        window.location.reload;
+        window.location.reload();
     };
     function mainTrackPrevious(){
         window.location.href = "im-feeling-lucky";
