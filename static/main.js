@@ -142,6 +142,14 @@
         stopTimer();
     })
 
+    videoElement.addActionHandler('nexttrack', function() {
+        mainTrackNext();
+    })
+
+    videoElement.addActionHandler('previoustrack', function() {
+        mainTrackPrevious();
+    })
+
     async function updateTime() {
         if (videoElement.currentTime < start) {
             videoElement.currentTime = start;
@@ -172,4 +180,11 @@
     videoElement.play().catch(reason => {
         console.log("Error starting video automatically", reason);
     });
+
+    function mainTrackNext(){
+        window.location.href = "im-feeling-lucky";
+    };
+    function mainTrackPrevious(){
+        window.location.href = "random";
+    };
 })();
