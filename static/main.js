@@ -142,13 +142,13 @@
         stopTimer();
     })
 
-    videoElement.addActionHandler('nexttrack', function() {
+    navigator.mediaSession.setActionHandler("previoustrack", function () {
         mainTrackNext();
-    })
+    });
 
-    videoElement.addActionHandler('previoustrack', function() {
+    navigator.mediaSession.setActionHandler("nexttrack", function () {
         mainTrackPrevious();
-    })
+    });
 
     async function updateTime() {
         if (videoElement.currentTime < start) {
