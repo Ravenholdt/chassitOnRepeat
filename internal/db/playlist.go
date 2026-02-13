@@ -1,13 +1,14 @@
 package db
 
 import (
+	"chassit-on-repeat/internal/db/data"
 	"chassit-on-repeat/internal/model"
 	"chassit-on-repeat/internal/utils"
 	"errors"
-	"github.com/kamva/mgm/v3"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/mongo/options"
 	"math/rand"
+
+	"go.mongodb.org/mongo-driver/v2/bson"
+	"go.mongodb.org/mongo-driver/v2/mongo/options"
 )
 
 func (d *DB) updatePlaylistJsonData(playlist *model.Playlist) (*model.Playlist, error) {
@@ -66,7 +67,7 @@ func (d *DB) UpdatePlaylistPlaytime(id string, t int64) (*model.Playlist, error)
 }
 
 func (d *DB) GetPlaylistSafe(playlist model.Playlist) (bool, error) {
-	count, err := d.VideoColl.CountDocuments(mgm.Ctx(), bson.M{
+	count, err := d.VideoColl.CountDocuments(data.Ctx(), bson.M{
 		"safe": false,
 		"name": bson.M{"$in": playlist.Videos},
 	})

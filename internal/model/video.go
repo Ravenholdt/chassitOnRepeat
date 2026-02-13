@@ -1,23 +1,19 @@
 package model
 
 import (
+	"chassit-on-repeat/internal/db/data"
 	"chassit-on-repeat/internal/utils"
-	"github.com/kamva/mgm/v3"
 	"time"
 )
 
 type Video struct {
-	mgm.DefaultModel `bson:",inline"`
-	Id               string   `json:"id" bson:"name"`
-	Start            *float64 `json:"start" bson:"start"`
-	End              *float64 `json:"end" bson:"end"`
-	Time             *int64   `json:"playtime" bson:"playtime"`
-	Safe             *bool    `json:"safe" bson:"safe"`
-	LastPlayed       *int64   `json:"lastplayed" bson:"lastplayed"`
-}
-
-func (v *Video) CollectionName() string {
-	return "data"
+	data.DefaultModel `bson:",inline"`
+	Id                string   `json:"id" bson:"name"`
+	Start             *float64 `json:"start" bson:"start"`
+	End               *float64 `json:"end" bson:"end"`
+	Time              *int64   `json:"playtime" bson:"playtime"`
+	Safe              *bool    `json:"safe" bson:"safe"`
+	LastPlayed        *int64   `json:"lastplayed" bson:"lastplayed"`
 }
 
 func (v *Video) AddTime(t int64) {

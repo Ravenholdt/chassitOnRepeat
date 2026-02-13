@@ -3,12 +3,11 @@ package service
 import (
 	"chassit-on-repeat/internal"
 	"chassit-on-repeat/internal/db"
-	"chassit-on-repeat/internal/model"
 	"chassit-on-repeat/internal/routes"
 	"chassit-on-repeat/internal/utils"
 	"context"
 	"fmt"
-	"github.com/kamva/mgm/v3"
+
 	"github.com/rs/zerolog/log"
 )
 
@@ -17,11 +16,7 @@ func NewService(handler *internal.FileHandler, overrides *internal.Overrides) *S
 	app := createWebApp()
 
 	r := routes.Routes{
-		DB: &db.DB{
-			Client:       client,
-			VideoColl:    mgm.Coll(&model.Video{}),
-			PlaylistColl: mgm.Coll(&model.Playlist{}),
-		},
+		DB:        db.NewDB(client),
 		Files:     handler,
 		Overrides: overrides,
 	}
