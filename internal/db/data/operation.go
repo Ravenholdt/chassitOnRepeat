@@ -1,0 +1,57 @@
+package data
+
+import (
+	"context"
+
+	"go.mongodb.org/mongo-driver/v2/bson"
+	"go.mongodb.org/mongo-driver/v2/mongo/options"
+)
+
+func create(ctx context.Context, c *Collection, model Model, opts ...options.Lister[options.InsertOneOptions]) error {
+	// Call to saving hook
+	if err := callToBeforeCreateHooks(ctx, model); err != nil {
+		return err
+	}
+
+	res, err := c.InsertOne(ctx, model, opts...)
+
+	if err != nil {
+		return err
+	}
+
+	// Set new id
+	model.SetID(res.InsertedID)
+
+	return callToAfterCreateHooks(ctx, model)
+}
+
+func first(ctx context.Context, c *Collection, filter interface{}, model Model, opts ...options.Lister[options.FindOneOptions]) error {
+	return c.FindOne(ctx, filter, opts...).Decode(model)
+}
+
+func update(ctx context.Context, c *Collection, model Model, opts ...options.Lister[options.UpdateOneOptions]) error {
+	// Call to saving hook
+	if err := callToBeforeUpdateHooks(ctx, model); err != nil {
+		return err
+	}
+
+	res, err := c.UpdateOne(ctx, bson.M{ID: model.GetID()}, bson.M{"$set": model}, opts...)
+
+	if err != nil {
+		return err
+	}
+
+	return callToAfterUpdateHooks(ctx, res, model)
+}
+
+func del(ctx context.Context, c *Collection, model Model) error {
+	if err := callToBeforeDeleteHooks(ctx, model); err != nil {
+		return err
+	}
+	res, err := c.DeleteOne(ctx, bson.M{ID: model.GetID()})
+	if err != nil {
+		return err
+	}
+
+	return callToAfterDeleteHooks(ctx, res, model)
+}
