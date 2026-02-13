@@ -4,12 +4,13 @@ import (
 	"chassit-on-repeat/internal/utils"
 	"errors"
 	"fmt"
-	"github.com/fsnotify/fsnotify"
-	"github.com/rs/zerolog/log"
 	"net/url"
 	"path/filepath"
 	"regexp"
 	"sync"
+
+	"github.com/fsnotify/fsnotify"
+	"github.com/rs/zerolog/log"
 )
 
 type VideoFile struct {
@@ -25,7 +26,7 @@ type FileHandler struct {
 	videos      map[string]VideoFile
 }
 
-var videoNameRegex = regexp.MustCompile("^.*/+(.*)-([A-Za-z0-9_-]{11}).mp4$")
+var videoNameRegex = regexp.MustCompile("^.*[/\\\\]+(.*)-([A-Za-z0-9_-]{11}).mp4$")
 
 func NewFileHandler() (*FileHandler, func()) {
 	watcher, err := fsnotify.NewWatcher()
