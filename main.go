@@ -4,13 +4,14 @@ import (
 	"chassit-on-repeat/internal"
 	"chassit-on-repeat/internal/service"
 	"chassit-on-repeat/internal/utils"
-	"github.com/joho/godotenv"
-	"github.com/rs/zerolog"
-	"github.com/rs/zerolog/log"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
+
+	"github.com/joho/godotenv"
+	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/log"
 )
 
 var goVersion = "devel"
@@ -33,7 +34,7 @@ func main() {
 	// Setup required environment variables
 	utils.ValidateEnvs()
 
-	// Create file handler and watcher
+	// Create a file handler and watcher
 	handler, stop := internal.NewFileHandler()
 	defer stop()
 
