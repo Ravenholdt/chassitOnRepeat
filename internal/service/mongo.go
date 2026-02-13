@@ -2,12 +2,12 @@ package service
 
 import (
 	"context"
-	"github.com/kamva/mgm/v3"
-	"github.com/rs/zerolog/log"
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
 	"os"
 	"time"
+
+	"github.com/rs/zerolog/log"
+	"go.mongodb.org/mongo-driver/v2/mongo"
+	"go.mongodb.org/mongo-driver/v2/mongo/options"
 )
 
 func setupMongo() *mongo.Client {
@@ -19,12 +19,10 @@ func setupMongo() *mongo.Client {
 		ApplyURI(os.Getenv("MONGODB_URI")).
 		SetServerAPIOptions(serverAPIOptions)
 
-	err := mgm.SetDefaultConfig(nil, "repeat", clientOptions)
+	client, err := mongo.Connect(clientOptions)
 	if err != nil {
-		panic(err)
+		log.Fatal().Str("tag", "mongo").Err(err).Msg("Can't setup MongoDB connection")
 	}
-
-	_, client, _, _ := mgm.DefaultConfigs()
 
 	err = client.Ping(ctx, nil)
 	if err != nil {

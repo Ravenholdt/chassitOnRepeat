@@ -1,12 +1,25 @@
 package db
 
 import (
-	"github.com/kamva/mgm/v3"
-	"go.mongodb.org/mongo-driver/mongo"
+	"chassit-on-repeat/internal/db/data"
+
+	"go.mongodb.org/mongo-driver/v2/mongo"
 )
 
 type DB struct {
 	Client       *mongo.Client
-	VideoColl    *mgm.Collection
-	PlaylistColl *mgm.Collection
+	db           *mongo.Database
+	VideoColl    *data.Collection
+	PlaylistColl *data.Collection
+}
+
+func NewDB(client *mongo.Client) *DB {
+	db := client.Database("repeat")
+
+	return &DB{
+		Client:       client,
+		db:           db,
+		VideoColl:    &data.Collection{Collection: db.Collection("data")},
+		PlaylistColl: &data.Collection{Collection: db.Collection("playlists")},
+	}
 }

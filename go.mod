@@ -9,8 +9,6 @@ require (
 	github.com/gofiber/template/html/v2 v2.1.3
 	github.com/google/uuid v1.6.0
 	github.com/joho/godotenv v1.5.1
-	github.com/kamva/mgm/v3 v3.5.0
-	github.com/rs/zerolog v1.31.0
 	github.com/rs/zerolog v1.34.0
 	go.mongodb.org/mongo-driver/v2 v2.5.0
 )

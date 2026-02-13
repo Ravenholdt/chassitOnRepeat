@@ -3,9 +3,9 @@ package db
 import (
 	"chassit-on-repeat/internal/model"
 	"errors"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/mongo/options"
 	"math/rand"
+
+	"go.mongodb.org/mongo-driver/v2/bson"
 )
 
 func (d *DB) GetDBVideos(videoIdFilter ...string) (*ResponseDataMap, error) {
@@ -15,7 +15,7 @@ func (d *DB) GetDBVideos(videoIdFilter ...string) (*ResponseDataMap, error) {
 		filter = bson.M{"name": bson.M{"$in": videoIdFilter}}
 	}
 
-	err := d.VideoColl.SimpleFind(&result, filter, options.Find().SetSort(bson.D{{"playtime", -1}}))
+	err := d.VideoColl.SimpleFind(&result, filter /*, options.Find().SetSort(bson.D{{"playtime", -1}})*/)
 	if err != nil {
 		return nil, errors.New("error data loading from database: " + err.Error())
 	}
