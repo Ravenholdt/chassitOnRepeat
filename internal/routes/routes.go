@@ -123,6 +123,5 @@ func (r *Routes) NotImplemented(ctx fiber.Ctx) error {
 
 func (r *Routes) GetResponse(v model.Video) *db.ResponseData {
 	file, _ := r.Files.GetVideoFile(v.Id)
-	res := db.CreateVideoData(v, file)
-	return &res
+	return new(db.CreateVideoData(v, file))
 }

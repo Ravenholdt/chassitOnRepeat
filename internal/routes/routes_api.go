@@ -81,21 +81,9 @@ func (r *Routes) ApiGetVideo(c fiber.Ctx) error {
 func (r *Routes) ApiPostVideoTime(c fiber.Ctx) error {
 	id := c.Params("id")
 
-	var req updateTimeRequest
-	err := c.Bind().Body(&req)
+	req, err := validateTimeRequest(c, id)
 	if err != nil {
-		log.Error().Str("tag", "routes_api").Str("id", id).Err(err).Msg("Error parsing post video time request")
-		return fiber.NewError(fiber.StatusBadRequest, "Bad body")
-	}
-
-	if req.Time < 0 {
-		log.Error().Str("tag", "routes_api").Str("id", id).Err(err).Msg("Input time was negative")
-		return fiber.NewError(fiber.StatusBadRequest, "Bad body")
-	}
-
-	if req.Time > 90_000 {
-		log.Error().Str("tag", "routes_api").Str("id", id).Err(err).Msg("Input time was too large")
-		return fiber.NewError(fiber.StatusBadRequest, "Bad body")
+		return err
 	}
 
 	v, err := r.DB.UpdateVideoPlaytime(id, int64(req.Time))
@@ -196,21 +184,9 @@ func (r *Routes) ApiGetPlaylist(c fiber.Ctx) error {
 func (r *Routes) ApiPostPlaylistTime(c fiber.Ctx) error {
 	id := c.Params("id")
 
-	var req updateTimeRequest
-	err := c.Bind().Body(&req)
+	req, err := validateTimeRequest(c, id)
 	if err != nil {
-		log.Error().Str("tag", "routes_api").Str("id", id).Err(err).Msg("Error parsing post playtime time request")
-		return fiber.NewError(fiber.StatusBadRequest, "Bad body")
-	}
-
-	if req.Time < 0 {
-		log.Error().Str("tag", "routes_api").Str("id", id).Err(err).Msg("Input time was negative")
-		return fiber.NewError(fiber.StatusBadRequest, "Bad body")
-	}
-
-	if req.Time > 90_000 {
-		log.Error().Str("tag", "routes_api").Str("id", id).Err(err).Msg("Input time was too large")
-		return fiber.NewError(fiber.StatusBadRequest, "Bad body")
+		return err
 	}
 
 	v, err := r.DB.UpdatePlaylistPlaytime(id, int64(req.Time))

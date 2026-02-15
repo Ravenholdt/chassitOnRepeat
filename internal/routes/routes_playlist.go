@@ -18,12 +18,11 @@ func (r *Routes) ViewPlaylists(c fiber.Ctx) error {
 	var playlistMap []fiber.Map
 	for _, playlist := range *playlists {
 		url, _ := c.GetRouteURL("playlist", fiber.Map{"id": playlist.Id})
-		lastPlayed := playlist.LastPlayed.Unix()
 		playlistMap = append(playlistMap, fiber.Map{
 			"url":            url,
 			"name":           playlist.Name,
 			"safe":           playlist.Safe,
-			"last_played":    &lastPlayed,
+			"last_played":    new(playlist.LastPlayed.Unix()),
 			"time":           playlist.Time,
 			"time_formatted": utils.FormatReadableTime(playlist.Time, false),
 			"videos":         len(playlist.Videos),

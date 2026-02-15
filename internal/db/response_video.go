@@ -34,42 +34,41 @@ func CreatePlaylistData(p model.Playlist) ResponseData {
 func (r *ResponseData) GetId() string {
 	if r.Video != nil {
 		return r.Video.Id
-	} else {
-		return r.Playlist.Id
 	}
+
+	return r.Playlist.Id
 }
 
 func (r *ResponseData) GetName() string {
 	if r.Video != nil {
 		return r.File.Name
-	} else {
-		return r.Playlist.Name
 	}
+
+	return r.Playlist.Name
 }
 
 func (r *ResponseData) GetTime() int64 {
 	if r.Video != nil {
 		return utils.Val(r.Video.Time, 0)
-	} else {
-		return r.Playlist.Time
 	}
+
+	return r.Playlist.Time
 }
 
 func (r *ResponseData) GetSafe() bool {
 	if r.Video != nil {
 		return utils.Val(r.Video.Safe, true)
-	} else {
-		return r.Playlist.Safe
 	}
+
+	return r.Playlist.Safe
 }
 
 func (r *ResponseData) GetLastPlayed() *int64 {
 	if r.Video != nil {
 		return r.Video.LastPlayed
-	} else {
-		t := r.Playlist.LastPlayed.Unix()
-		return &t
 	}
+
+	return new(r.Playlist.LastPlayed.Unix())
 }
 
 func (r *ResponseData) GetPrefix() string {

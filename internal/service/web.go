@@ -44,8 +44,7 @@ func createWebApp() *fiber.App {
 		ErrorHandler: func(ctx fiber.Ctx, err error) error {
 			code := fiber.StatusInternalServerError
 			msg := err.Error()
-			var e *fiber.Error
-			if errors.As(err, &e) {
+			if e, ok := errors.AsType[*fiber.Error](err); ok {
 				code = e.Code
 				msg = e.Message
 			}

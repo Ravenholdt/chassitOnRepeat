@@ -46,14 +46,14 @@ func (f *IDField) SetID(id interface{}) {
 
 // Creating hook is used here to set the `created_at` field
 // value when inserting a new model into the database.
-func (f *DateFields) Creating(ctx context.Context) error {
+func (f *DateFields) Creating(_ context.Context) error {
 	f.CreatedAt = time.Now().UTC()
 	return nil
 }
 
 // Saving hook is used here to set the `updated_at` field
 // value when creating or updating a model.
-func (f *DateFields) Saving(ctx context.Context) error {
+func (f *DateFields) Saving(_ context.Context) error {
 	f.UpdatedAt = time.Now().UTC()
 	return nil
 }
