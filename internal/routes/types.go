@@ -12,7 +12,7 @@ type Routes struct {
 }
 
 type updateTimeRequest struct {
-	Time float64 `json:"time" validate:"required,numeric,gt=0,lt=90000" message:"required=Time must be between 0 and 90000"`
+	Time float64 `json:"time"`
 }
 
 type updateVideoSettingsRequest struct {
