@@ -1,5 +1,5 @@
 /**
- * Shorter function to get element by id
+ * Shorter function to get the element by id
  * @param {string} id The id to locate with
  * @returns {HTMLElement} The corresponding element
  */
@@ -8,7 +8,7 @@ function elementById(id) {
 }
 
 /**
- * Shorter function to get elements from a class
+ * Shorter function to get the elements from a class
  * @param {string} classNames The string of the classnames to locate
  * @returns {HTMLCollectionOf<Element>}
  */
@@ -17,7 +17,7 @@ function elementsByClass(classNames) {
 }
 
 /**
- * Format a number to the given amount of digits
+ * Format a number to the given number of digits
  * @param {number} num
  * @param {number} digits
  */
@@ -26,7 +26,7 @@ function formatNumber(num, digits = 2) {
 }
 
 /**
- * Formats the time to show days, hours, minutes and seconds
+ * Formats the time to show days, hours, minutes, and seconds
  * @param {number} time
  */
 function formatTime(time) {
