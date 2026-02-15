@@ -2,9 +2,10 @@ package utils
 
 import (
 	"errors"
-	"github.com/rs/zerolog/log"
 	"os"
 	"strconv"
+
+	"github.com/rs/zerolog/log"
 )
 
 func GetStringEnv(key string, fallback string) string {

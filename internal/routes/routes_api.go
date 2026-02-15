@@ -153,7 +153,7 @@ func (r *Routes) ApiVideoRandom(c fiber.Ctx) error {
 	if id != video.Id {
 		// Replace with overridden video if not error happens
 		fromId, err := r.DB.GetVideoFromId(id)
-		if err == nil {
+		if err == nil && fromId != nil {
 			video = fromId
 		}
 	}
@@ -238,7 +238,7 @@ func (r *Routes) ApiPlaylistRandom(c fiber.Ctx) error {
 	if id != video.Id {
 		// Replace with overridden video if not error happens
 		fromId, err := r.DB.GetVideoFromId(id)
-		if err == nil {
+		if err == nil && fromId != nil {
 			video = fromId
 		}
 	}
