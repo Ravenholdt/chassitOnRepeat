@@ -1,5 +1,3 @@
-version: '3'
-
 services:
   repeat:
     image: ghcr.io/ravenholdt/chassitonrepeat:latest

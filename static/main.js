@@ -98,7 +98,7 @@
             console.log(value.status, value.statusText, await value.text());
     }
 
-    elementById("update-loop").addEventListener("click", async (event) => {
+    elementById("update-loop").addEventListener("click", async () => {
         await sendInterval();
     });
 
@@ -144,11 +144,11 @@
     })
 
     navigator.mediaSession.setActionHandler("nexttrack", function () {
-        mainTrackNext();
+        window.location.href = "im-feeling-lucky";
     });
 
     navigator.mediaSession.setActionHandler("previoustrack", function () {
-        mainTrackPrevious();
+        window.location.href = "random";
     });
 
     async function updateTime() {
@@ -181,12 +181,4 @@
     videoElement.play().catch(reason => {
         console.log("Error starting video automatically", reason);
     });
-
-    function mainTrackNext(){
-        window.location.href = "im-feeling-lucky";
-    }
-
-    function mainTrackPrevious(){
-        window.location.href = "random";
-    }
 })();

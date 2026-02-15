@@ -56,7 +56,7 @@
     }
 
     /**
-     * Updates the page with video data from a json response
+     * Updates the page with video data from a JSON response
      * @param {string} url The url that will fetch a new video
      * @returns {Promise<void>}
      */
@@ -97,9 +97,8 @@
 
     /**
      * Changes the video to the clicked video
-     * @param {MouseEvent} e The click event
      */
-    async function videoClicked(e) {
+    async function videoClicked() {
         await updateVideoInfo(`/api/v1/video/${this.dataset.id}`)
     }
 

@@ -90,26 +90,11 @@
         console.log("Ended");
     }
 
-    // Basic key detection - this actually works
-    document.addEventListener('keydown', function(event) {
-      console.log('Key pressed:', event.key);
-      console.log('Key code:', event.code);
-      console.log('Which key:', event.which); // Backup for older browsers
-    });
-
-    navigator.mediaSession.setActionHandler("nexttrack", function () {
-        mainTrackNext();
+    navigator.mediaSession.setActionHandler("nexttrack", async function () {
+        await updateVideo()
     });
 
     navigator.mediaSession.setActionHandler("previoustrack", function () {
-        mainTrackPrevious();
-    });
-
-    function mainTrackNext(){
-        window.location.reload();
-    }
-
-    function mainTrackPrevious(){
         window.location.href = "im-feeling-lucky";
-    }
+    });
 })();
