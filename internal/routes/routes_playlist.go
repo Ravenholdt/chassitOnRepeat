@@ -3,12 +3,13 @@ package routes
 import (
 	"chassit-on-repeat/internal/utils"
 	"fmt"
-	"github.com/gofiber/fiber/v2"
 	"sort"
+
+	"github.com/gofiber/fiber/v3"
 )
 
 // ViewPlaylists Renders a list of playlists
-func (r *Routes) ViewPlaylists(c *fiber.Ctx) error {
+func (r *Routes) ViewPlaylists(c fiber.Ctx) error {
 	playlists, err := r.DB.GetPlaylists()
 	if err != nil {
 		return fiber.NewError(500, "error loading playlist")
@@ -39,7 +40,7 @@ func (r *Routes) ViewPlaylists(c *fiber.Ctx) error {
 }
 
 // ViewPlaylist Renders a specific playlist and the list of videos
-func (r *Routes) ViewPlaylist(c *fiber.Ctx) error {
+func (r *Routes) ViewPlaylist(c fiber.Ctx) error {
 	id := c.Params("id")
 
 	playlist, err := r.DB.GetPlaylistFromId(id)

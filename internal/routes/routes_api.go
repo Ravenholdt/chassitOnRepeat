@@ -2,7 +2,8 @@ package routes
 
 import (
 	"chassit-on-repeat/internal/utils"
-	"github.com/gofiber/fiber/v2"
+
+	"github.com/gofiber/fiber/v3"
 	"github.com/rs/zerolog/log"
 )
 
@@ -10,14 +11,14 @@ import (
 //
 // GET /api
 // GET /api/v1
-func (r *Routes) ApiIndex(c *fiber.Ctx) error {
+func (r *Routes) ApiIndex(c fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).SendString("Api is running")
 }
 
 // ApiStats Returns playtime and video statistics.
 //
 // GET /api/v1/stats
-func (r *Routes) ApiStats(c *fiber.Ctx) error {
+func (r *Routes) ApiStats(c fiber.Ctx) error {
 	dbVideos, err := r.DB.GetDBVideos()
 	videoCount := len(r.Files.GetVideos())
 
@@ -41,7 +42,7 @@ func (r *Routes) ApiStats(c *fiber.Ctx) error {
 // ApiGetVideos Returns an array of all videos.
 //
 // GET /api/v1/video
-func (r *Routes) ApiGetVideos(c *fiber.Ctx) error {
+func (r *Routes) ApiGetVideos(c fiber.Ctx) error {
 	videos, err := r.DB.GetDBVideos()
 	if err != nil {
 		return err
@@ -60,7 +61,7 @@ func (r *Routes) ApiGetVideos(c *fiber.Ctx) error {
 // ApiGetVideo Returns a specific video specified by the id.
 //
 // GET /api/v1/video/:id
-func (r *Routes) ApiGetVideo(c *fiber.Ctx) error {
+func (r *Routes) ApiGetVideo(c fiber.Ctx) error {
 	id := c.Params("id")
 	response, err := r.DB.GetVideoFromId(id)
 	if err != nil {
@@ -77,11 +78,11 @@ func (r *Routes) ApiGetVideo(c *fiber.Ctx) error {
 //	"time": integer
 //
 // POST /api/v1/video/:id
-func (r *Routes) ApiPostVideoTime(c *fiber.Ctx) error {
+func (r *Routes) ApiPostVideoTime(c fiber.Ctx) error {
 	id := c.Params("id")
 
 	var req updateTimeRequest
-	err := c.BodyParser(&req)
+	err := c.Bind().Body(&req)
 	if err != nil {
 		log.Error().Str("tag", "routes_api").Str("id", id).Err(err).Msg("Error parsing post video time request")
 		return fiber.NewError(fiber.StatusBadRequest, "Bad body")
@@ -114,11 +115,11 @@ func (r *Routes) ApiPostVideoTime(c *fiber.Ctx) error {
 //	"safe": boolean
 //
 // POST /api/v1/video/:id/settings
-func (r *Routes) ApiPostVideoSettings(c *fiber.Ctx) error {
+func (r *Routes) ApiPostVideoSettings(c fiber.Ctx) error {
 	id := c.Params("id")
 
 	var req updateVideoSettingsRequest
-	err := c.BodyParser(&req)
+	err := c.Bind().Body(&req)
 	if err != nil {
 		log.Error().Str("tag", "routes_api").Str("id", id).Err(err).Msg("Error parsing post video settings request")
 		return fiber.NewError(fiber.StatusBadRequest, "Bad body")
@@ -139,7 +140,7 @@ func (r *Routes) ApiPostVideoSettings(c *fiber.Ctx) error {
 //	"safe": boolean
 //
 // /api/v1/video/random
-func (r *Routes) ApiVideoRandom(c *fiber.Ctx) error {
+func (r *Routes) ApiVideoRandom(c fiber.Ctx) error {
 	safe := c.Request().URI().QueryArgs().Has("safe")
 
 	video, err := r.DB.GetRandomVideo(r.Files.GetVideoIds(), safe)
@@ -163,7 +164,7 @@ func (r *Routes) ApiVideoRandom(c *fiber.Ctx) error {
 // ApiGetPlaylists Returns an array of all playlists.
 //
 // GET /api/v1/playlist
-func (r *Routes) ApiGetPlaylists(c *fiber.Ctx) error {
+func (r *Routes) ApiGetPlaylists(c fiber.Ctx) error {
 	playlists, err := r.DB.GetPlaylists()
 	if err != nil {
 		return err
@@ -175,7 +176,7 @@ func (r *Routes) ApiGetPlaylists(c *fiber.Ctx) error {
 // ApiGetPlaylist Returns a specific playlist specified by the id.
 //
 // GET /api/v1/playlist/:id
-func (r *Routes) ApiGetPlaylist(c *fiber.Ctx) error {
+func (r *Routes) ApiGetPlaylist(c fiber.Ctx) error {
 	id := c.Params("id")
 	response, err := r.DB.GetPlaylistFromId(id)
 	if err != nil {
@@ -192,11 +193,11 @@ func (r *Routes) ApiGetPlaylist(c *fiber.Ctx) error {
 //	"time": integer
 //
 // POST /api/v1/playlist/:id
-func (r *Routes) ApiPostPlaylistTime(c *fiber.Ctx) error {
+func (r *Routes) ApiPostPlaylistTime(c fiber.Ctx) error {
 	id := c.Params("id")
 
 	var req updateTimeRequest
-	err := c.BodyParser(&req)
+	err := c.Bind().Body(&req)
 	if err != nil {
 		log.Error().Str("tag", "routes_api").Str("id", id).Err(err).Msg("Error parsing post playtime time request")
 		return fiber.NewError(fiber.StatusBadRequest, "Bad body")
@@ -224,7 +225,7 @@ func (r *Routes) ApiPostPlaylistTime(c *fiber.Ctx) error {
 // ApiPlaylistRandom Returns a random video from a playlist.
 //
 // /api/v1/playlist/:id/random
-func (r *Routes) ApiPlaylistRandom(c *fiber.Ctx) error {
+func (r *Routes) ApiPlaylistRandom(c fiber.Ctx) error {
 	playlistId := c.Params("id")
 
 	video, err := r.DB.GetRandomPlaylistVideo(playlistId, r.Files.GetVideoIds())

@@ -5,10 +5,11 @@ import (
 	"encoding/csv"
 	"errors"
 	"fmt"
-	"github.com/fsnotify/fsnotify"
-	"github.com/rs/zerolog/log"
 	"os"
 	"sync"
+
+	"github.com/fsnotify/fsnotify"
+	"github.com/rs/zerolog/log"
 )
 
 type Overrides struct {

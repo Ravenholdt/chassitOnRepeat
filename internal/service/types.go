@@ -3,7 +3,7 @@ package service
 import (
 	"chassit-on-repeat/internal/routes"
 
-	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v3"
 )
 
 type Service struct {

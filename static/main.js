@@ -57,7 +57,8 @@
         const value = await fetch(`/api/v1/video/${id}`, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'X-Idempotency-Key': createUUIDv4()
             },
             body: JSON.stringify({
                 time: t,
@@ -76,7 +77,7 @@
 
     async function sendInterval() {
         const value = await fetch(`/api/v1/video/${id}/settings`, {
-            method: 'POST',
+            method: 'PUT',
             headers: {
                 'Content-Type': 'application/json'
             },

@@ -5,8 +5,9 @@ import (
 	"chassit-on-repeat/internal/model"
 	"chassit-on-repeat/internal/utils"
 	"encoding/json"
-	"github.com/gofiber/fiber/v2"
 	"sort"
+
+	"github.com/gofiber/fiber/v3"
 )
 
 type ResponseDataMap map[string]ResponseData

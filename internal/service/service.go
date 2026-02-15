@@ -8,6 +8,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/gofiber/fiber/v3"
 	"github.com/rs/zerolog/log"
 )
 
@@ -43,5 +44,10 @@ func (s *Service) Start() error {
 	}()
 
 	log.Info().Str("tag", "service").Msgf("Listening on port: %d", utils.GetIntEnv("PORT", 8080))
-	return s.fiber.Listen(fmt.Sprintf(":%d", utils.GetIntEnv("PORT", 8080)))
+	return s.fiber.Listen(
+		fmt.Sprintf(":%d", utils.GetIntEnv("PORT", 8080)),
+		fiber.ListenConfig{
+			DisableStartupMessage: true,
+		},
+	)
 }

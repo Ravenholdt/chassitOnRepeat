@@ -193,6 +193,13 @@ This is a documentation for the Chassit on Repeat API
 > |------|------------|----------------|-------------------------------|
 > | `id` |  required  | string         | The id of the video to update |
 
+##### Headers
+
+> | name                | type     | data type | description                                  |
+> |---------------------|----------|-----------|----------------------------------------------|
+> | `X-Idempotency-Key` | required | string    | The unique UUID key for a particular request |
+
+
 ##### Post data
 > | name   |  type      | data type | description                           |
 > |--------|------------|-----------|---------------------------------------|
@@ -213,7 +220,7 @@ This is a documentation for the Chassit on Repeat API
 
 </details>
 
-## POST /api/v1/video/{id}/settings
+## PUT /api/v1/video/{id}/settings
 
 <details>
     <summary><code>Updates the start/end and safe status of the specified video</code></summary>

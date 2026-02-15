@@ -2,12 +2,13 @@ package fiberlog
 
 import (
 	"fmt"
-	"github.com/gofiber/fiber/v2"
-	"github.com/google/uuid"
-	"github.com/rs/zerolog"
 	"runtime/debug"
 	"sync"
 	"time"
+
+	"github.com/gofiber/fiber/v3"
+	"github.com/google/uuid"
+	"github.com/rs/zerolog"
 )
 
 type logFields struct {
@@ -44,8 +45,8 @@ func (lf *logFields) MarshalZerologObject(e *zerolog.Event) {
 	}
 }
 
-func New(log zerolog.Logger) func(*fiber.Ctx) error {
-	return func(c *fiber.Ctx) error {
+func New(log zerolog.Logger) func(fiber.Ctx) error {
+	return func(c fiber.Ctx) error {
 		start := time.Now()
 
 		rid := c.Get(fiber.HeaderXRequestID)
@@ -91,7 +92,7 @@ func New(log zerolog.Logger) func(*fiber.Ctx) error {
 					_ = c.SendStatus(fiber.StatusInternalServerError)
 				}
 
-				fields.StatusCode = c.Context().Response.StatusCode()
+				fields.StatusCode = c.Response().StatusCode()
 				fields.Latency = time.Since(start).Seconds()
 
 				log.Error().EmbedObject(fields).Msg("panic recover")
@@ -105,7 +106,7 @@ func New(log zerolog.Logger) func(*fiber.Ctx) error {
 			}
 		}
 
-		fields.StatusCode = c.Context().Response.StatusCode()
+		fields.StatusCode = c.Response().StatusCode()
 		fields.Latency = time.Since(start).Seconds()
 
 		switch {

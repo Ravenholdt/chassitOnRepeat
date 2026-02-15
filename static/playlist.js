@@ -32,7 +32,8 @@
         const value = await fetch(`/api/v1/playlist/${playlist_id}`, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'X-Idempotency-Key': createUUIDv4()
             },
             body: JSON.stringify({
                 time: t,
