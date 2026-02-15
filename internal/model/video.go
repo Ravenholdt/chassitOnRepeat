@@ -17,13 +17,11 @@ type Video struct {
 }
 
 func (v *Video) AddTime(t int64) {
-	newTime := utils.Val(v.Time, 0) + t
-	v.Time = &newTime
+	v.Time = new(utils.Val(v.Time, 0) + t)
 }
 
 func (v *Video) UpdateLastPlayed() {
-	unix := time.Now().Unix()
-	v.LastPlayed = &unix
+	v.LastPlayed = new(time.Now().Unix())
 }
 
 func (v *Video) SetSafe(safe bool) {
@@ -31,11 +29,10 @@ func (v *Video) SetSafe(safe bool) {
 }
 
 func NewVideo(id string) *Video {
-	v := &Video{
-		Id: id,
+	return &Video{
+		Id:   id,
+		Safe: new(true),
 	}
-	v.SetSafe(true)
-	return v
 }
 
 func NewVideoWithTime(id string, t int64) *Video {

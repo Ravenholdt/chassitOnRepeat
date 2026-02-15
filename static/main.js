@@ -184,8 +184,9 @@
 
     function mainTrackNext(){
         window.location.href = "im-feeling-lucky";
-    };
+    }
+
     function mainTrackPrevious(){
         window.location.href = "random";
-    };
+    }
 })();

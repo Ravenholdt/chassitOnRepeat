@@ -91,6 +91,5 @@ func (d *DB) GetRandomVideo(ids []string, safe bool) (*model.Video, error) {
 	if err != nil {
 		return nil, errors.New("no random video found: " + err.Error())
 	}
-	randVid := dbVideos[rand.Intn(len(dbVideos))]
-	return &randVid, nil
+	return new(dbVideos[rand.Intn(len(dbVideos))]), nil
 }
