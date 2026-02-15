@@ -3,11 +3,12 @@ package routes
 import (
 	"chassit-on-repeat/internal/utils"
 	"fmt"
-	"github.com/gofiber/fiber/v2"
+
+	"github.com/gofiber/fiber/v3"
 	"github.com/rs/zerolog/log"
 )
 
-func (r *Routes) ViewRandom(c *fiber.Ctx) error {
+func (r *Routes) ViewRandom(c fiber.Ctx) error {
 	safe := c.Request().URI().QueryArgs().Has("safe")
 
 	video, err := r.DB.GetRandomVideo(r.Files.GetVideoIds(), safe)

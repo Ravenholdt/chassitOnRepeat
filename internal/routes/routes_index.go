@@ -9,7 +9,7 @@ import (
 	"sort"
 	"strconv"
 
-	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v3"
 	"github.com/rs/zerolog/log"
 )
 
@@ -58,18 +58,20 @@ func (r *Routes) sortTime(history []fiber.Map) func(i int, j int) bool {
 }
 
 // ViewFeelingLucky Redirects to a random video
-func (r *Routes) ViewFeelingLucky(c *fiber.Ctx) error {
+func (r *Routes) ViewFeelingLucky(c fiber.Ctx) error {
 	video, err := r.DB.GetRandomVideo(r.Files.GetVideoIds(), false)
 	if err != nil {
 		log.Error().Str("tag", "routes_views").Err(err).Msg("Error getting random video")
 		return fiber.NewError(fiber.StatusNotFound, "Error getting random video")
 	}
 
-	return c.RedirectToRoute("video", fiber.Map{"id": video.Id}, 302)
+	return c.Redirect().Route("video", fiber.RedirectConfig{
+		Params: fiber.Map{"id": video.Id},
+	})
 }
 
 // ViewLastVideos Renders a list of last videos and handle video view
-func (r *Routes) ViewLastVideos(c *fiber.Ctx) error {
+func (r *Routes) ViewLastVideos(c fiber.Ctx) error {
 	history, videos, totalTime, err := r.getHistory("")
 	if err != nil {
 		return err
@@ -82,7 +84,7 @@ func (r *Routes) ViewLastVideos(c *fiber.Ctx) error {
 }
 
 // ViewTopVideos Renders a list of top videos and handle video view
-func (r *Routes) ViewTopVideos(c *fiber.Ctx) error {
+func (r *Routes) ViewTopVideos(c fiber.Ctx) error {
 	history, videos, totalTime, err := r.getHistory("")
 	if err != nil {
 		return err
@@ -94,7 +96,7 @@ func (r *Routes) ViewTopVideos(c *fiber.Ctx) error {
 	return r.renderVideoView(c, videos, history, totalTime, "video-list")
 }
 
-func (r *Routes) renderVideoView(c *fiber.Ctx, videos *db.ResponseDataMap, history []fiber.Map, totalTime int64, timeRoute string) error {
+func (r *Routes) renderVideoView(c fiber.Ctx, videos *db.ResponseDataMap, history []fiber.Map, totalTime int64, timeRoute string) error {
 	id := c.Params("id")
 	videoFile, _ := r.Files.GetVideoFile(id)
 

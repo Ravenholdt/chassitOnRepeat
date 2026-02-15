@@ -10,6 +10,9 @@ import (
 //go:embed *
 var files embed.FS
 
+//go:embed favicon.ico
+var Favicon []byte
+
 func GetFiles() fs.FS {
 	// Use embedded files if not running with DEBUG
 	if !utils.GetBoolEnv("DEBUG", false) {

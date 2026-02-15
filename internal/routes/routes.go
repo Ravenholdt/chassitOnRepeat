@@ -6,36 +6,36 @@ import (
 	"chassit-on-repeat/internal/utils"
 	"chassit-on-repeat/static"
 	_ "embed"
-	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/middleware/filesystem"
-	"github.com/gofiber/fiber/v2/middleware/limiter"
-	"io/fs"
-	"net/http"
 	"time"
+
+	"github.com/gofiber/fiber/v3"
+	"github.com/gofiber/fiber/v3/middleware/limiter"
+	fiberStatic "github.com/gofiber/fiber/v3/middleware/static"
 )
 
 func (r *Routes) SetupRoutes(app *fiber.App) {
 	// Provide static files from embedded filesystem
-	app.Use("/static", filesystem.New(filesystem.Config{
-		Root: http.FS(static.GetFiles()),
-	}))
-	app.Get("/favicon.ico", func(ctx *fiber.Ctx) error {
-		icon, _ := static.GetFiles().(fs.ReadFileFS).ReadFile("favicon.ico")
-		return ctx.Status(200).Send(icon)
-	})
+	app.Get("/static/*", fiberStatic.New(
+		"",
+		fiberStatic.Config{
+			FS: static.GetFiles(),
+		},
+	))
 
-	// Provide files from provided path on the server
-	app.Static("/files", utils.GetStringEnv("FILES_PATH", "/files"), fiber.Static{
-		Compress:  true,
-		ByteRange: true,
-		MaxAge:    86400, // 1 day
-	})
+	// Provide files from a provided path on the server
+	app.Get("/files/*", fiberStatic.New(
+		utils.GetStringEnv("FILES_PATH", "/files"),
+		fiberStatic.Config{
+			Compress:  true,
+			ByteRange: true,
+			MaxAge:    86400, // 1 day
+		}))
 
 	limit := limiter.New(limiter.Config{
 		Max:                1,
 		Expiration:         1 * time.Second,
 		SkipFailedRequests: true,
-		KeyGenerator: func(ctx *fiber.Ctx) string {
+		KeyGenerator: func(ctx fiber.Ctx) string {
 			return ctx.IP() + ctx.Path()
 		},
 	})
@@ -66,6 +66,8 @@ func (r *Routes) SetupRoutes(app *fiber.App) {
 	// Updates the repeated time of the specified video.
 	specificVideo.Post("/", limit, r.ApiPostVideoTime)
 	// Updates the start/end and safe status of the specified video.
+	specificVideo.Put("/settings", r.ApiPostVideoSettings)
+	// deprecated
 	specificVideo.Post("/settings", r.ApiPostVideoSettings)
 
 	// /api/v1/playlist/* endpoints
@@ -85,11 +87,15 @@ func (r *Routes) SetupRoutes(app *fiber.App) {
 	// Routes serving html content
 
 	// Serves the random video page
-	app.Get("/random", r.ViewRandom)
+	app.Get("/random", r.ViewRandom).Name("random")
 
 	// Redirects /random-safe to the real url
-	app.Get("/random-safe", func(ctx *fiber.Ctx) error {
-		return ctx.Redirect("/random?safe")
+	app.Get("/random-safe", func(ctx fiber.Ctx) error {
+		return ctx.Redirect().Route("random", fiber.RedirectConfig{
+			Queries: map[string]string{
+				"safe": "true",
+			},
+		})
 	})
 
 	// Redirects to a random video
@@ -111,7 +117,7 @@ func (r *Routes) SetupRoutes(app *fiber.App) {
 	app.Get("/:id", r.ViewLastVideos).Name("video")
 }
 
-func (r *Routes) NotImplemented(ctx *fiber.Ctx) error {
+func (r *Routes) NotImplemented(ctx fiber.Ctx) error {
 	return ctx.SendStatus(fiber.StatusNotImplemented)
 }
 

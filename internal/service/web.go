@@ -3,17 +3,22 @@ package service
 import (
 	"chassit-on-repeat/internal/service/fiberlog"
 	"chassit-on-repeat/internal/utils"
+	"chassit-on-repeat/static"
 	"chassit-on-repeat/views"
 	"errors"
-	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/middleware/compress"
-	"github.com/gofiber/fiber/v2/middleware/cors"
-	"github.com/gofiber/fiber/v2/middleware/requestid"
-	"github.com/gofiber/helmet/v2"
-	"github.com/gofiber/template/html/v2"
-	"github.com/rs/zerolog/log"
 	"math/rand"
 	"strings"
+
+	"github.com/gofiber/fiber/v3"
+	"github.com/gofiber/fiber/v3/middleware/compress"
+	"github.com/gofiber/fiber/v3/middleware/cors"
+	"github.com/gofiber/fiber/v3/middleware/favicon"
+	"github.com/gofiber/fiber/v3/middleware/helmet"
+	"github.com/gofiber/fiber/v3/middleware/idempotency"
+	"github.com/gofiber/fiber/v3/middleware/requestid"
+	"github.com/gofiber/fiber/v3/middleware/responsetime"
+	"github.com/gofiber/template/html/v3"
+	"github.com/rs/zerolog/log"
 )
 
 func createWebApp() *fiber.App {
@@ -30,12 +35,13 @@ func createWebApp() *fiber.App {
 	trustedProxy := utils.GetStringEnv("TRUSTED_PROXY", "127.0.0.1")
 
 	app := fiber.New(fiber.Config{
-		Views:                   engine,
-		DisableStartupMessage:   true,
-		EnableTrustedProxyCheck: proxy,
-		TrustedProxies:          []string{trustedProxy},
-		ProxyHeader:             proxyHeader,
-		ErrorHandler: func(ctx *fiber.Ctx, err error) error {
+		Views:      engine,
+		TrustProxy: proxy,
+		TrustProxyConfig: fiber.TrustProxyConfig{
+			Proxies: []string{trustedProxy},
+		},
+		ProxyHeader: proxyHeader,
+		ErrorHandler: func(ctx fiber.Ctx, err error) error {
 			code := fiber.StatusInternalServerError
 			msg := err.Error()
 			var e *fiber.Error
@@ -57,7 +63,9 @@ func createWebApp() *fiber.App {
 
 			if code == fiber.StatusNotFound {
 				// Redirect to "Something Went Terribly Wrong" video
-				return ctx.RedirectToRoute("video", fiber.Map{"id": "t3otBjVZzT0"})
+				return ctx.Redirect().Route("video", fiber.RedirectConfig{
+					Params: fiber.Map{"id": "t3otBjVZzT0"},
+				})
 			}
 
 			ctx.Set(fiber.HeaderContentType, fiber.MIMETextPlainCharsetUTF8)
@@ -65,7 +73,12 @@ func createWebApp() *fiber.App {
 		},
 	})
 
+	app.Use(favicon.New(favicon.Config{
+		Data: static.Favicon,
+	}))
+	app.Use(idempotency.New())
 	app.Use(requestid.New())
+	app.Use(responsetime.New())
 	app.Use(fiberlog.New(log.Logger))
 	app.Use(helmet.New())
 	app.Use(compress.New())
